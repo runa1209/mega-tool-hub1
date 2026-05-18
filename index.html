@@ -1,481 +1,289 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Tool Hub - Free Online Tools</title>
-    <meta name="description" content="Free online tools - Age Calculator, Password Generator, BMI Calculator and more!">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>SmartHub | Premium Web Utilities & Developer Tools</title>
+    <meta name="description" content="Access blazing-fast developer utilities, network checkers, URL shorteners, and converters directly from your browser. 100% Free.">
+    <meta name="keywords" content="IP checker, URL shortener, web tools, developer utilities, online tools">
+    <meta name="author" content="SmartHub">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
     <style>
-        body {
-            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        
+        /* Glassmorphism & Advanced UI */
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .glass-hero { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        /* Smooth Card Hover Effects */
+        .tool-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(0); }
+        .tool-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1); border-color: #3b82f6; }
+        
+        /* Entrance Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .ad-container {
-            min-height: 90px;
-            background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-        .loading-skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        .tool-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
+        .animate-fade-up { animation: fadeUp 0.6s ease-out forwards; opacity: 0; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900 flex flex-col min-h-screen">
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="glass-nav border-b border-slate-200/60 sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="flex items-center space-x-2">
-                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
-                            <i class="fas fa-tools text-white text-xl"></i>
-                        </div>
-                        <span class="text-2xl font-bold text-gray-800">Mega Tool Hub</span>
-                    </a>
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">S</div>
+                    <span class="font-extrabold text-2xl tracking-tight text-slate-900">SmartHub</span>
                 </div>
                 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#tools" class="text-gray-600 hover:text-indigo-600 font-medium transition">Tools</a>
-                    <a href="#categories" class="text-gray-600 hover:text-indigo-600 font-medium transition">Categories</a>
-                    <a href="#popular" class="text-gray-600 hover:text-indigo-600 font-medium transition">Popular</a>
-                    <a href="/admin/" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-                        <i class="fas fa-lock mr-2"></i>Admin
-                    </a>
+                    <a href="#" class="text-slate-600 hover:text-blue-600 font-semibold transition">Home</a>
+                    <a href="#tools" class="text-slate-600 hover:text-blue-600 font-semibold transition">Tools</a>
+                    <a href="pages/about.html" class="text-slate-600 hover:text-blue-600 font-semibold transition">About</a>
+                    <a href="pages/contact.html" class="text-slate-600 hover:text-blue-600 font-semibold transition">Contact</a>
                 </div>
 
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 focus:outline-none">
-                        <i class="fas fa-bars text-2xl"></i>
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" class="p-2 text-slate-600 hover:text-blue-600 focus:outline-none transition bg-slate-100 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="#tools" class="block px-3 py-2 text-gray-600 hover:bg-indigo-50 rounded-md">Tools</a>
-                <a href="#categories" class="block px-3 py-2 text-gray-600 hover:bg-indigo-50 rounded-md">Categories</a>
-                <a href="#popular" class="block px-3 py-2 text-gray-600 hover:bg-indigo-50 rounded-md">Popular</a>
-                <a href="/admin/" class="block px-3 py-2 text-indigo-600 font-medium">Admin Panel</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-2xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">Home</a>
+                <a href="#tools" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">Tools</a>
+                <a href="pages/about.html" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">About</a>
+                <a href="pages/contact.html" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">Contact</a>
             </div>
         </div>
     </nav>
 
-    <!-- Top Ad Banner -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div id="ad-top" class="ad-container rounded-lg">
-            <span><i class="fas fa-ad mr-2"></i>Advertisement Space (Admin Managed)</span>
+    <div id="top-ad" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 hidden animate-fade-up">
+        <div class="border-2 border-dashed border-slate-200 rounded-3xl py-10 text-center flex flex-col items-center justify-center bg-white shadow-sm">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Advertisement</span>
+            <div id="ad-content-top" class="w-full overflow-hidden"></div>
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
-        <div class="text-center">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6">
-                Your All-in-One <span class="text-transparent bg-clip-text gradient-bg">Online Tool Box</span>
+    <div class="relative bg-slate-900 text-white mt-8 mx-4 sm:mx-6 lg:mx-8 rounded-[2.5rem] overflow-hidden shadow-2xl animate-fade-up">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
+        <div class="absolute -top-32 -right-32 w-[30rem] h-[30rem] bg-blue-500/20 rounded-full blur-[100px]"></div>
+        <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] bg-indigo-500/20 rounded-full blur-[100px]"></div>
+        
+        <div class="relative z-10 px-6 py-28 md:py-36 text-center max-w-5xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-hero mb-8 text-sm font-semibold text-blue-200 shadow-xl border border-white/10 hover:bg-white/10 transition cursor-default">
+                <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span></span>
+                Platform is Online & Fast
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.05]">
+                Smart Tools for <br> 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">Modern Creators</span>
             </h1>
-            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                Free, fast, and easy-to-use online tools. From Age Calculator to Password Generator - everything you need in one place!
+            
+            <p class="text-lg md:text-xl text-slate-300 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+                Boost your productivity with our suite of blazing-fast developer utilities, network checkers, and link management tools.
             </p>
             
-            <!-- Search Bar -->
-            <div class="max-w-2xl mx-auto relative">
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    placeholder="Search tools (e.g., age calculator, password generator)..." 
-                    class="w-full px-6 py-4 rounded-full border-2 border-gray-200 focus:border-indigo-500 focus:outline-none text-lg shadow-lg"
-                >
-                <button class="absolute right-2 top-2 bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 transition">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="mt-12 flex justify-center space-x-8 text-gray-600">
-                <div class="flex items-center">
-                    <i class="fas fa-tools text-indigo-600 mr-2"></i>
-                    <span id="total-tools">Loading...</span>
+            <div class="max-w-2xl mx-auto relative group">
+                <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                    <svg class="h-6 w-6 text-slate-400 group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
-                <div class="flex items-center">
-                    <i class="fas fa-users text-indigo-600 mr-2"></i>
-                    <span>Free Forever</span>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-bolt text-indigo-600 mr-2"></i>
-                    <span>Instant Results</span>
+                <input type="text" id="searchInput" placeholder="Search for tools (e.g., Shortener)..." class="block w-full pl-16 pr-24 py-5 border border-white/10 rounded-2xl leading-5 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:bg-white/10 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 transition-all text-lg backdrop-blur-md shadow-2xl">
+                <div class="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none">
+                    <span class="text-xs font-bold text-slate-400 bg-white/10 px-2 py-1 rounded-md border border-white/10">Ctrl + K</span>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Categories Section -->
-    <section id="categories" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Browse by Category</h2>
-        
-        <div id="categories-container" class="flex flex-wrap justify-center gap-4">
-            <!-- Categories will be loaded from Firebase -->
-            <div class="loading-skeleton h-12 w-32 rounded-full"></div>
-            <div class="loading-skeleton h-12 w-40 rounded-full"></div>
-            <div class="loading-skeleton h-12 w-36 rounded-full"></div>
-        </div>
-    </section>
-
-    <!-- Middle Ad Banner -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div id="ad-middle" class="ad-container rounded-lg">
-            <span><i class="fas fa-ad mr-2"></i>Advertisement Space (Admin Managed)</span>
         </div>
     </div>
 
-    <!-- Tools Grid Section -->
-    <section id="tools" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-900">All Tools</h2>
-            <div class="flex space-x-2">
-                <button id="filter-all" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">All</button>
-                <button id="filter-popular" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Popular</button>
-            </div>
-        </div>
-
-        <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Tools will be loaded from Firebase -->
-            <div class="loading-skeleton h-64 rounded-xl"></div>
-            <div class="loading-skeleton h-64 rounded-xl"></div>
-            <div class="loading-skeleton h-64 rounded-xl"></div>
-            <div class="loading-skeleton h-64 rounded-xl"></div>
-            <div class="loading-skeleton h-64 rounded-xl"></div>
-            <div class="loading-skeleton h-64 rounded-xl"></div>
-        </div>
-    </section>
-
-    <!-- Popular Tools Section -->
-    <section id="popular" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white rounded-3xl my-12 shadow-sm">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Most Popular Tools</h2>
+    <main id="tools" class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-24">
         
-        <div id="popular-tools" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Popular tools will be loaded from Firebase -->
-            <div class="loading-skeleton h-48 rounded-xl"></div>
-            <div class="loading-skeleton h-48 rounded-xl"></div>
-            <div class="loading-skeleton h-48 rounded-xl"></div>
-            <div class="loading-skeleton h-48 rounded-xl"></div>
-        </div>
-    </section>
-
-    <!-- Bottom Ad Banner -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div id="ad-bottom" class="ad-container rounded-lg">
-            <span><i class="fas fa-ad mr-2"></i>Advertisement Space (Admin Managed)</span>
-        </div>
-    </div>
-
-    <!-- Features Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="text-center p-6">
-                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-bolt text-indigo-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Lightning Fast</h3>
-                <p class="text-gray-600">All tools work instantly in your browser. No downloads, no waiting!</p>
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 animate-fade-up">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Application Hub</h2>
+                <p class="text-slate-500 mt-3 text-lg font-medium">Select a utility below to get started instantly.</p>
             </div>
-            <div class="text-center p-6">
-                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">100% Secure</h3>
-                <p class="text-gray-600">Your data never leaves your browser. We prioritize your privacy.</p>
-            </div>
-            <div class="text-center p-6">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-mobile-alt text-purple-600 text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Mobile Friendly</h3>
-                <p class="text-gray-600">Works perfectly on all devices - desktop, tablet, and mobile.</p>
+            <div class="hidden md:flex items-center gap-2 text-sm font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Cloud Synced
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
-                            <i class="fas fa-tools text-white"></i>
-                        </div>
-                        <span class="text-xl font-bold">Mega Tool Hub</span>
+        <div id="toolsGrid" class="grid gap-8 transition-all duration-500">
+            
+            <a href="tools/ip-checker.html" id="ip-card" class="tool-card group bg-white p-8 rounded-3xl border border-slate-200 relative overflow-hidden animate-fade-up delay-100">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10 transition-transform group-hover:scale-125"></div>
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">🌐</div>
+                <h3 class="text-2xl font-bold text-slate-900 mb-3 tool-title">IP Address Checker</h3>
+                <p class="text-slate-500 leading-relaxed mb-8 font-medium text-sm">Instantly analyze your network's public IP, Internet Service Provider, and exact geographical location.</p>
+                <div class="inline-flex items-center font-bold text-blue-600 group-hover:translate-x-2 transition-transform">
+                    Open Tool <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </div>
+            </a>
+
+            <a href="tools/url-shortener.html" id="url-card" class="tool-card group bg-white p-8 rounded-3xl border border-slate-200 relative overflow-hidden animate-fade-up delay-200">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 transition-transform group-hover:scale-125"></div>
+                <div class="absolute top-6 right-6 bg-indigo-100 text-indigo-700 text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span> Active
+                </div>
+                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">🔗</div>
+                <h3 class="text-2xl font-bold text-slate-900 mb-3 tool-title">Smart URL Shortener</h3>
+                <p class="text-slate-500 leading-relaxed mb-8 font-medium text-sm">Convert long, messy links into short, trackable, and highly professional URLs in milliseconds.</p>
+                <div class="inline-flex items-center font-bold text-indigo-600 group-hover:translate-x-2 transition-transform">
+                    Open Tool <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </div>
+            </a>
+
+        </div>
+
+        <div id="no-results" class="hidden text-center py-20 bg-white rounded-3xl mt-8 border border-slate-200 shadow-sm animate-fade-up">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full text-slate-400 mb-6 text-4xl border border-slate-100">🔍</div>
+            <h3 class="text-2xl font-black text-slate-800 tracking-tight">No tools found</h3>
+            <p class="text-slate-500 mt-2 text-md font-medium">Try searching with a different keyword.</p>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
+                <div class="md:col-span-5">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl text-white flex items-center justify-center font-bold text-xl shadow-md">S</div>
+                        <span class="font-black text-2xl text-slate-900 tracking-tight">SmartHub</span>
                     </div>
-                    <p class="text-gray-400">Free online tools for everyone. Simple, fast, and reliable.</p>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm font-medium">
+                        The ultimate cloud-powered utility platform designed for speed, privacy, and seamless user experience. Build better, faster.
+                    </p>
                 </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">Home</a></li>
-                        <li><a href="#tools" class="hover:text-white transition">All Tools</a></li>
-                        <li><a href="#categories" class="hover:text-white transition">Categories</a></li>
+                
+                <div class="md:col-span-3 md:col-start-7">
+                    <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-widest">Legal Information</h4>
+                    <ul class="space-y-3 text-sm font-medium text-slate-500">
+                        <li><a href="pages/privacy-policy.html" class="hover:text-blue-600 transition">Privacy Policy</a></li>
+                        <li><a href="pages/terms.html" class="hover:text-blue-600 transition">Terms of Service</a></li>
+                        <li><a href="pages/disclaimer.html" class="hover:text-blue-600 transition">Disclaimer</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                
+                <div class="md:col-span-3">
+                    <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-widest">Company</h4>
+                    <ul class="space-y-3 text-sm font-medium text-slate-500">
+                        <li><a href="pages/about.html" class="hover:text-blue-600 transition">About Us</a></li>
+                        <li><a href="pages/contact.html" class="hover:text-blue-600 transition">Contact Support</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Connect</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
-                </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p> Mega Tool Hub. All rights reserved.</p>
+            
+            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-sm font-medium">
+                <p>&copy; 2026 SmartHub Web Services. All rights reserved.</p>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Systems Operational
+                </div>
             </div>
         </div>
     </footer>
 
-    <!-- Firebase SDK -->
     <script type="module">
-        // Import Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // Your Firebase Config
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
         const firebaseConfig = {
             apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
             authDomain: "mega-tool-hub.firebaseapp.com",
             projectId: "mega-tool-hub",
-            storageBucket: "mega-tool-hub.firebasestorage.app",
-            messagingSenderId: "312297953340",
             appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
         };
-
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Mobile Menu Toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
-
-        // Load Categories
-        async function loadCategories() {
+        // 1. Fetch & Apply Firebase Admin Settings
+        async function fetchSettings() {
             try {
-                const categoriesSnapshot = await getDocs(collection(db, 'categories'));
-                const container = document.getElementById('categories-container');
-                container.innerHTML = '';
-                
-                categoriesSnapshot.forEach(doc => {
-                    const category = doc.data();
-                    const btn = document.createElement('button');
-                    btn.className = 'px-6 py-3 bg-white border-2 border-gray-200 rounded-full hover:border-indigo-500 hover:text-indigo-600 transition font-medium shadow-sm';
-                    btn.innerHTML = `<i class="${category.icon} mr-2"></i>${category.name}`;
-                    btn.onclick = () => filterByCategory(category.id);
-                    container.appendChild(btn);
-                });
-            } catch (error) {
-                console.error('Error loading categories:', error);
-            }
-        }
-
-        // Load Tools
-        async function loadTools(categoryFilter = null, searchQuery = '') {
-            try {
-                let toolsQuery = query(collection(db, 'tools'), orderBy('createdAt', 'desc'));
-                
-                if (categoryFilter) {
-                    toolsQuery = query(collection(db, 'tools'), where('category', '==', categoryFilter));
-                }
-                
-                const toolsSnapshot = await getDocs(toolsQuery);
-                const container = document.getElementById('tools-grid');
-                container.innerHTML = '';
-                
-                let count = 0;
-                toolsSnapshot.forEach(doc => {
-                    const tool = doc.data();
+                const docSnap = await getDoc(doc(db, "settings", "tools"));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
                     
-                    // Search filter
-                    if (searchQuery && !tool.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-                        !tool.description.toLowerCase().includes(searchQuery.toLowerCase())) {
-                        return;
-                    }
+                    // Layout Engine
+                    const grid = document.getElementById('toolsGrid');
+                    grid.classList.add(`md:grid-cols-2`, `lg:grid-cols-${data.gridCols || 3}`);
                     
-                    count++;
-                    const card = createToolCard(doc.id, tool);
-                    container.appendChild(card);
-                });
-                
-                document.getElementById('total-tools').textContent = `${count}+ Tools`;
-                
-                if (count === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12 text-gray-500">
-                            <i class="fas fa-search text-4xl mb-4"></i>
-                            <p class="text-xl">No tools found</p>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error loading tools:', error);
-            }
-        }
+                    // IP Checker Visibility Logic
+                    if(data['ip-checker'] === false) document.getElementById('ip-card').classList.add('hidden');
+                    else document.getElementById('ip-card').classList.remove('hidden');
 
-        // Load Popular Tools
-        async function loadPopularTools() {
-            try {
-                const popularQuery = query(collection(db, 'tools'), where('popular', '==', true), limit(4));
-                const toolsSnapshot = await getDocs(popularQuery);
-                const container = document.getElementById('popular-tools');
-                container.innerHTML = '';
-                
-                toolsSnapshot.forEach(doc => {
-                    const tool = doc.data();
-                    const card = createToolCard(doc.id, tool, true);
-                    container.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Error loading popular tools:', error);
-            }
-        }
-
-        // Load Ads
-        async function loadAds() {
-            try {
-                const adsSnapshot = await getDocs(collection(db, 'ads'));
-                adsSnapshot.forEach(doc => {
-                    const ad = doc.data();
-                    const adElement = document.getElementById(`ad-${ad.position}`);
-                    if (adElement && ad.active) {
-                        adElement.innerHTML = ad.code || `<a href="${ad.link}" target="_blank" class="block w-full h-full flex items-center justify-center text-indigo-600 hover:text-indigo-800">${ad.title}</a>`;
-                        adElement.style.border = 'none';
-                        adElement.style.background = 'transparent';
+                    // URL Shortener Visibility Logic
+                    if(data['url-shortener'] === false) document.getElementById('url-card').classList.add('hidden');
+                    else document.getElementById('url-card').classList.remove('hidden');
+                    
+                    // AdSense Engine
+                    if(data.showAds) {
+                        document.getElementById('top-ad').classList.remove('hidden');
+                        document.getElementById('ad-content-top').innerHTML = data.adCode || "AdSense Script Active";
                     }
-                });
-            } catch (error) {
-                console.error('Error loading ads:', error);
+                }
+            } catch(e) { 
+                console.error("Database sync issue:", e);
+                // Fail-safe: Show default tools if DB fails
+                document.getElementById('ip-card').classList.remove('hidden');
+                document.getElementById('url-card').classList.remove('hidden');
             }
         }
+        fetchSettings();
 
-        // Create Tool Card
-        function createToolCard(id, tool, isPopular = false) {
-            const div = document.createElement('div');
-            div.className = 'bg-white rounded-xl shadow-md card-hover overflow-hidden border border-gray-100';
-            
-            const iconColors = {
-                calculator: 'bg-blue-100 text-blue-600',
-                security: 'bg-red-100 text-red-600',
-                text: 'bg-green-100 text-green-600',
-                converter: 'bg-yellow-100 text-yellow-600',
-                developer: 'bg-purple-100 text-purple-600',
-                default: 'bg-indigo-100 text-indigo-600'
-            };
-            
-            const colorClass = iconColors[tool.iconCategory] || iconColors.default;
-            
-            div.innerHTML = `
-                <div class="p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="tool-icon ${colorClass}">
-                            <i class="${tool.icon}"></i>
-                        </div>
-                        ${tool.popular ? '<span class="bg-orange-100 text-orange-600 text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>' : ''}
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">${tool.name}</h3>
-                    <p class="text-gray-600 mb-4 line-clamp-2">${tool.description}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500"><i class="fas fa-clock mr-1"></i>${tool.time || 'Instant'}</span>
-                        <a href="/tools/${id}" class="inline-flex items-center text-indigo-600 font-semibold hover:text-indigo-800 transition">
-                            Use Tool <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-            `;
-            
-            return div;
-        }
+        // 2. High-Performance Search Engine
+        const searchInput = document.getElementById('searchInput');
+        const toolsGrid = document.getElementById('toolsGrid');
+        const cards = toolsGrid.getElementsByClassName('tool-card');
+        const noResults = document.getElementById('no-results');
 
-        // Filter by Category
-        function filterByCategory(categoryId) {
-            loadTools(categoryId);
-        }
-
-        // Search functionality
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            loadTools(null, e.target.value);
+        // Ctrl+K Shortcut for Search
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
         });
 
-        // Filter buttons
-        document.getElementById('filter-all').addEventListener('click', () => {
-            loadTools();
+        searchInput.addEventListener('input', function() {
+            let filter = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            Array.from(cards).forEach(card => {
+                // If a card is hidden by Admin Panel, keep it hidden during search
+                if(card.classList.contains('hidden') && filter === '') return;
+
+                let title = card.querySelector('.tool-title').innerText.toLowerCase();
+                if (title.includes(filter)) {
+                    card.style.display = "";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            noResults.classList.toggle('hidden', visibleCount > 0);
         });
 
-        document.getElementById('filter-popular').addEventListener('click', () => {
-            loadTools(null, 'popular');
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCategories();
-            loadTools();
-            loadPopularTools();
-            loadAds();
+        // 3. Smooth Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
     </script>
 </body>
