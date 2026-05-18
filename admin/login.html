@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>অ্যাডমিন লগইন</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-96">
+        <h2 class="text-2xl font-bold mb-6 text-center text-slate-800">অ্যাডমিন লগইন</h2>
+        <input type="email" id="email" placeholder="ইমেইল" class="w-full p-3 mb-4 border border-slate-200 rounded-lg outline-none focus:border-blue-500">
+        <input type="password" id="password" placeholder="পাসওয়ার্ড" class="w-full p-3 mb-6 border border-slate-200 rounded-lg outline-none focus:border-blue-500">
+        <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-bold transition">লগইন করুন</button>
+        <p id="msg" class="mt-4 text-red-500 text-sm text-center font-medium"></p>
+    </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
+            authDomain: "mega-tool-hub.firebaseapp.com",
+            projectId: "mega-tool-hub",
+            storageBucket: "mega-tool-hub.firebasestorage.app",
+            messagingSenderId: "312297953340",
+            appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.login = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('msg');
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                msg.innerText = "ভুল ইমেইল বা পাসওয়ার্ড!";
+            }
+        }
+    </script>
+</body>
+</html>
