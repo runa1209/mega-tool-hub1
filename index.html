@@ -34,6 +34,7 @@
             <a href="pages/privacy-policy.html" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">🛡️</span> Privacy Policy</a>
         </nav>
     </div>
+    
     <div id="menuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
 
     <header class="flex justify-between items-center px-3 py-2 bg-white border-b border-gray-200 sticky top-0 z-30">
@@ -90,17 +91,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Sidebar Toggle Logic
+        // Sidebar Toggle
         window.toggleMenu = () => {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('menuOverlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('menuOverlay').classList.toggle('hidden');
         };
 
-        let allVideos = []; // Store fetched videos here for sorting
+        let allVideos = [];
 
-        // Fetch Ads
+        // Load Ads
         async function loadAds() {
             try {
                 const snap = await getDoc(doc(db, "settings", "tools"));
@@ -111,42 +110,43 @@
             } catch(e) { console.error(e); }
         }
 
-        // Fetch Videos
+        // Fetch Videos (with ID included for watch page)
         async function fetchVideos() {
             try {
                 const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
                 
                 allVideos = [];
-                querySnapshot.forEach((doc) => allVideos.push(doc.data()));
+                querySnapshot.forEach((doc) => {
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    allVideos.push(data);
+                });
                 
-                sortVideos('new'); // Initial load: Newest first
+                sortVideos('new'); 
             } catch (error) {
                 document.getElementById('videoGrid').innerHTML = '<div class="col-span-2 text-center py-10 text-red-400 text-sm">Error loading database.</div>';
             }
         }
 
-        // Sort and Render Logic
+        // Sort Logic
         window.sortVideos = (type) => {
-            // Update button styles
             const btnBest = document.getElementById('btn-best');
             const btnNew = document.getElementById('btn-new');
             
             if (type === 'new') {
                 btnNew.className = "filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
                 btnBest.className = "filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
-                
-                allVideos.sort((a, b) => b.timestamp - a.timestamp); // Sort by time
+                allVideos.sort((a, b) => b.timestamp - a.timestamp);
             } else {
                 btnBest.className = "filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
                 btnNew.className = "filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
-                
-                allVideos.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0)); // Sort by views
+                allVideos.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0)); 
             }
-
             renderGrid();
         };
 
+        // Render Grid
         function renderGrid() {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
@@ -158,13 +158,13 @@
 
             allVideos.forEach(v => {
                 grid.innerHTML += `
-                    <div class="cursor-pointer">
+                    <div class="cursor-pointer group" onclick="window.location.href='watch.html?v=${v.id}'">
                         <div class="relative w-full aspect-[4/3] bg-gray-200 rounded-[4px] overflow-hidden">
-                            <img src="${v.thumbnail}" alt="Thumbnail" class="w-full h-full object-cover">
+                            <img src="${v.thumbnail}" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[11px] font-bold px-1 rounded-sm">${v.duration || '00:00'}</span>
                         </div>
                         <div class="flex justify-between items-start mt-1.5">
-                            <h3 class="text-[13px] font-bold text-gray-900 leading-tight title-font truncate pr-1">${v.title}</h3>
+                            <h3 class="text-[13px] font-bold text-gray-900 leading-tight title-font truncate pr-1 group-hover:text-red-600">${v.title}</h3>
                         </div>
                         <div class="flex items-center gap-1 mt-1 text-[11px] text-gray-500">
                             <img src="https://ui-avatars.com/api/?name=${v.channelName || 'CPA'}&background=random" class="w-3.5 h-3.5 rounded-full">
