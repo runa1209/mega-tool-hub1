@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্মার্ট ইউটিলিটি হাব</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-blue-600 text-white py-12 text-center shadow-lg">
+        <h1 class="text-4xl font-bold">স্মার্ট ইউটিলিটি হাব</h1>
+        <p class="text-md mt-2 opacity-90">Cloudflare এবং Firebase দ্বারা তৈরি মেগা টুল সাইট</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-12 text-center">
+        <div class="bg-white p-10 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-emerald-600">সেটআপ সফল হয়েছে! 🎉</h2>
+            <p class="text-slate-600 mt-4">আপনার ওয়েবসাইট এখন Firebase-এর সাথে যুক্ত। এবার আমরা একটি একটি করে টুল যোগ করা শুরু করব।</p>
+        </div>
+    </main>
+
+    <script type="module">
+        // ফায়ারবেস মডিউল ইমপোর্ট করা
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // এখানে আপনার নোটপ্যাড থেকে আসল Firebase Config কোডটি বসান
+        const firebaseConfig = {
+            apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
+            authDomain: "mega-tool-hub.firebaseapp.com",
+            projectId: "mega-tool-hub",
+            storageBucket: "mega-tool-hub.firebasestorage.app",
+            messagingSenderId: "312297953340",
+            appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
+        };
+
+        // ফায়ারবেস চালু করা
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        console.log("Firebase Connected Successfully!");
+    </script>
+</body>
+</html>
