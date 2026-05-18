@@ -3,240 +3,1783 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Admin | VideoHub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>StreamHub Admin | Professional Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-hover: #1f2b47;
+            --accent: #e94560;
+            --accent-hover: #c73e54;
+            --success: #00d9a3;
+            --warning: #ffc107;
+            --danger: #ff4757;
+            --info: #3498db;
+            --text-primary: #eaeaea;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a4a;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .section-title {
+            display: none;
+        }
+
+        .nav-section {
+            padding: 16px 0;
+        }
+
+        .section-title {
+            padding: 0 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--bg-hover);
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .badge {
+            display: none;
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.collapsed + .main-wrapper {
+            margin-left: 80px;
+        }
+
+        /* Header */
+        .top-header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb span {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 16px 10px 40px;
+            color: var(--text-primary);
+            width: 300px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            width: 350px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .header-icon:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .user-profile:hover {
+            background: var(--bg-hover);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .user-info {
+            line-height: 1.2;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 24px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-icon.blue { background: rgba(52, 152, 219, 0.15); color: var(--info); }
+        .stat-icon.green { background: rgba(0, 217, 163, 0.15); color: var(--success); }
+        .stat-icon.orange { background: rgba(255, 193, 7, 0.15); color: var(--warning); }
+        .stat-icon.red { background: rgba(233, 69, 96, 0.15); color: var(--accent); }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .stat-trend.up {
+            background: rgba(0, 217, 163, 0.15);
+            color: var(--success);
+        }
+
+        .stat-trend.down {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-btn:hover, .chart-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Recent Videos Table */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-danger {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: rgba(0, 217, 163, 0.15);
+            color: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success);
+            color: var(--bg-primary);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .data-table tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        .video-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .video-thumb {
+            width: 80px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-primary);
+        }
+
+        .video-info-cell h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .video-info-cell p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-published {
+            background: rgba(0, 217, 163, 0.15);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.15);
+            color: var(--warning);
+        }
+
+        .status-rejected {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--danger);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Activity Feed */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 12px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .activity-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+
+        .activity-text strong {
+            color: var(--text-primary);
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Top Channels */
+        .channel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .channel-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .channel-rank {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .channel-rank.top {
+            background: var(--accent);
+            color: white;
+        }
+
+        .channel-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+        }
+
+        .channel-details {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .channel-stats {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .channel-growth {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            padding: 0 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transform: translateX(120%);
+            transition: all 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .toast-icon.success { background: rgba(0, 217, 163, 0.15); color: var(--success); }
+        .toast-icon.error { background: rgba(255, 71, 87, 0.15); color: var(--danger); }
+        .toast-icon.info { background: rgba(52, 152, 219, 0.15); color: var(--info); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.collapsed {
+                transform: translateX(0);
+                width: var(--sidebar-width);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-box input {
+                width: 200px;
+            }
+            .search-box input:focus {
+                width: 220px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Stats mini chart */
+        .sparkline {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 40px;
+        }
+
+        .spark-bar {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 2px;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .spark-bar:hover {
+            opacity: 1;
+        }
+    </style>
+<base target="_blank">
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans p-4 md:p-8">
-
-    <div class="max-w-6xl mx-auto">
-        <header class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-6 border border-gray-200">
-            <h1 class="text-2xl font-black tracking-tight text-gray-900">Admin Control Panel</h1>
-            <button onclick="logout()" class="text-red-600 font-bold hover:bg-red-50 px-4 py-2 rounded-lg transition">Logout</button>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <div class="lg:col-span-5 space-y-6">
-                
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 relative">
-                    <div id="editModeBadge" class="hidden absolute top-4 right-4 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded">Edit Mode Active</div>
-                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">🎬 Publish Video</h2>
-                    
-                    <input type="hidden" id="editVideoId" value="">
-                    
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Video Title</label>
-                            <input type="text" id="vidTitle" class="w-full p-2 bg-gray-50 border rounded-lg text-sm focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Thumbnail URL & Embed URL</label>
-                            <div class="flex gap-2">
-                                <input type="url" id="vidThumb" placeholder="Thumb URL" class="w-1/2 p-2 bg-gray-50 border rounded-lg text-sm focus:border-blue-500 outline-none">
-                                <input type="url" id="vidEmbed" placeholder="Embed URL" class="w-1/2 p-2 bg-gray-50 border rounded-lg text-sm focus:border-blue-500 outline-none">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 mb-1">Category</label>
-                                <input type="text" id="vidCategory" placeholder="e.g. Trending, Tech" class="w-full p-2 bg-gray-50 border rounded-lg text-sm uppercase">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 mb-1">Tags (Comma separated)</label>
-                                <input type="text" id="vidTags" placeholder="e.g. funny, new, viral" class="w-full p-2 bg-gray-50 border rounded-lg text-sm">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 mb-1">Duration</label>
-                                <input type="text" id="vidDuration" placeholder="10:30" class="w-full p-2 bg-gray-50 border rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 mb-1">Views</label>
-                                <input type="text" id="vidViews" placeholder="2M" class="w-full p-2 bg-gray-50 border rounded-lg text-sm">
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 mt-4">
-                            <button onclick="saveVideo()" id="saveBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition">Publish Video</button>
-                            <button onclick="cancelEdit()" id="cancelBtn" class="hidden bg-gray-200 text-gray-700 font-bold px-4 rounded-lg">Cancel</button>
-                        </div>
-                    </div>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-play"></i>
                 </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-96 overflow-y-auto">
-                    <h2 class="text-lg font-bold mb-4 sticky top-0 bg-white z-10 py-2">💰 5x Ad Placements</h2>
-                    
-                    <div class="space-y-4">
-                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
-                            <div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">1. Top Header Ad</span><input type="checkbox" id="ad1Toggle"></div>
-                            <textarea id="ad1Code" class="w-full h-12 p-2 text-xs border rounded"></textarea>
-                        </div>
-                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
-                            <div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">2. In-Grid Ad (Slot 1)</span><input type="checkbox" id="ad2Toggle"></div>
-                            <textarea id="ad2Code" class="w-full h-12 p-2 text-xs border rounded"></textarea>
-                        </div>
-                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
-                            <div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">3. In-Grid Ad (Slot 2)</span><input type="checkbox" id="ad3Toggle"></div>
-                            <textarea id="ad3Code" class="w-full h-12 p-2 text-xs border rounded"></textarea>
-                        </div>
-                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
-                            <div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">4. Bottom Footer Ad</span><input type="checkbox" id="ad4Toggle"></div>
-                            <textarea id="ad4Code" class="w-full h-12 p-2 text-xs border rounded"></textarea>
-                        </div>
-                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
-                            <div class="flex justify-between items-center mb-2"><span class="text-sm font-bold">5. Sticky Floating Ad</span><input type="checkbox" id="ad5Toggle"></div>
-                            <textarea id="ad5Code" class="w-full h-12 p-2 text-xs border rounded"></textarea>
-                        </div>
-                    </div>
-                    <button onclick="saveAds()" class="mt-4 w-full bg-gray-800 hover:bg-black text-white font-bold py-2.5 rounded-lg transition sticky bottom-0">Save Ad Settings</button>
-                </div>
+                <div class="sidebar-title">StreamHub</div>
             </div>
 
-            <div class="lg:col-span-7">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-full">
-                    <h2 class="text-lg font-bold mb-4">📁 Published Videos</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-600">
-                                <tr>
-                                    <th class="p-3 font-bold rounded-tl-lg">Title & Category</th>
-                                    <th class="p-3 font-bold">Views</th>
-                                    <th class="p-3 font-bold text-right rounded-tr-lg">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminVideoList" class="divide-y divide-gray-100"></tbody>
-                        </table>
+            <div class="nav-section">
+                <div class="section-title">Main</div>
+                <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-th-large"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('analytics')">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('videos')">
+                    <i class="fas fa-video"></i>
+                    <span class="nav-text">Videos</span>
+                    <span class="badge">24</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('users')">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">Users</span>
+                    <span class="badge">1.2k</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('comments')">
+                    <i class="fas fa-comments"></i>
+                    <span class="nav-text">Comments</span>
+                    <span class="badge">89</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Management</div>
+                <a href="#" class="nav-item" onclick="showSection('categories')">
+                    <i class="fas fa-folder"></i>
+                    <span class="nav-text">Categories</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('reports')">
+                    <i class="fas fa-flag"></i>
+                    <span class="nav-text">Reports</span>
+                    <span class="badge">5</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('monetization')">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span class="nav-text">Monetization</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">System</div>
+                <a href="#" class="nav-item" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('logs')">
+                    <i class="fas fa-history"></i>
+                    <span class="nav-text">Activity Logs</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="toggle-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb">
+                        Admin / <span>Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search anything..." id="globalSearch">
+                    </div>
+                    <div class="header-icon" onclick="showToast('No new notifications', 'info')">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+                    <div class="header-icon" onclick="showToast('Messages feature coming soon', 'info')">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <div class="user-avatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name">Admin User</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card animate-in">
+                        <div class="stat-header">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 12.5%
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalViews">2.4M</div>
+                        <div class="stat-label">Total Views</div>
+                        <div class="sparkline" style="margin-top: 12px;">
+                            <div class="spark-bar" style="height: 40%"></div>
+                            <div class="spark-bar" style="height: 60%"></div>
+                            <div class="spark-bar" style="height: 45%"></div>
+                            <div class="spark-bar" style="height: 80%"></div>
+                            <div class="spark-bar" style="height: 65%"></div>
+                            <div class="spark-bar" style="height: 90%"></div>
+                            <div class="spark-bar" style="height: 75%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card animate-in" style="animation-delay: 0.1s">
+                        <div class="stat-header">
+                            <div class="stat-icon green">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 8.2%
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalUsers">18.5K</div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="sparkline" style="margin-top: 12px;">
+                            <div class="spark-bar" style="height: 30%"></div>
+                            <div class="spark-bar" style="height: 50%"></div>
+                            <div class="spark-bar" style="height: 40%"></div>
+                            <div class="spark-bar" style="height: 70%"></div>
+                            <div class="spark-bar" style="height: 55%"></div>
+                            <div class="spark-bar" style="height: 85%"></div>
+                            <div class="spark-bar" style="height: 60%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card animate-in" style="animation-delay: 0.2s">
+                        <div class="stat-header">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 23.1%
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalVideos">3,842</div>
+                        <div class="stat-label">Total Videos</div>
+                        <div class="sparkline" style="margin-top: 12px;">
+                            <div class="spark-bar" style="height: 50%"></div>
+                            <div class="spark-bar" style="height: 70%"></div>
+                            <div class="spark-bar" style="height: 60%"></div>
+                            <div class="spark-bar" style="height: 90%"></div>
+                            <div class="spark-bar" style="height: 75%"></div>
+                            <div class="spark-bar" style="height: 100%"></div>
+                            <div class="spark-bar" style="height: 80%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card animate-in" style="animation-delay: 0.3s">
+                        <div class="stat-header">
+                            <div class="stat-icon red">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="stat-trend down">
+                                <i class="fas fa-arrow-down"></i> 2.4%
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalLikes">856K</div>
+                        <div class="stat-label">Total Likes</div>
+                        <div class="sparkline" style="margin-top: 12px;">
+                            <div class="spark-bar" style="height: 80%"></div>
+                            <div class="spark-bar" style="height: 60%"></div>
+                            <div class="spark-bar" style="height: 70%"></div>
+                            <div class="spark-bar" style="height: 50%"></div>
+                            <div class="spark-bar" style="height: 65%"></div>
+                            <div class="spark-bar" style="height: 45%"></div>
+                            <div class="spark-bar" style="height: 55%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="chart-card animate-in">
+                        <div class="chart-header">
+                            <div class="chart-title">Views Analytics</div>
+                            <div class="chart-actions">
+                                <button class="chart-btn active">Week</button>
+                                <button class="chart-btn">Month</button>
+                                <button class="chart-btn">Year</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="viewsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card animate-in" style="animation-delay: 0.1s">
+                        <div class="chart-header">
+                            <div class="chart-title">Device Breakdown</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Videos Table -->
+                <div class="table-card animate-in">
+                    <div class="table-header">
+                        <div class="table-title">Recent Videos</div>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary" onclick="refreshData()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <button class="btn btn-primary" onclick="openUploadModal()">
+                                <i class="fas fa-plus"></i> Add Video
+                            </button>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Video</th>
+                                <th>Channel</th>
+                                <th>Views</th>
+                                <th>Likes</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="videosTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bottom Grid -->
+                <div class="charts-grid">
+                    <!-- Recent Activity -->
+                    <div class="chart-card animate-in">
+                        <div class="chart-header">
+                            <div class="chart-title">Recent Activity</div>
+                            <button class="chart-btn">View All</button>
+                        </div>
+                        <div class="activity-list" id="activityList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Top Channels -->
+                    <div class="chart-card animate-in" style="animation-delay: 0.1s">
+                        <div class="chart-header">
+                            <div class="chart-title">Top Channels</div>
+                            <button class="chart-btn">View All</button>
+                        </div>
+                        <div class="channel-list" id="channelList">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Upload New Video</div>
+                <button class="modal-close" onclick="closeUploadModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Video Title</label>
+                    <input type="text" class="form-input" id="videoTitle" placeholder="Enter video title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="videoDesc" placeholder="Enter video description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="videoCategory">
+                        <option>Gaming</option>
+                        <option>Music</option>
+                        <option>Technology</option>
+                        <option>Education</option>
+                        <option>Entertainment</option>
+                        <option>Sports</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Thumbnail URL</label>
+                    <input type="text" class="form-input" id="videoThumb" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Channel Name</label>
+                    <input type="text" class="form-input" id="videoChannel" placeholder="Channel name">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addVideo()">
+                    <i class="fas fa-upload"></i> Upload Video
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Edit Video</div>
+                <button class="modal-close" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editVideoId">
+                <div class="form-group">
+                    <label class="form-label">Video Title</label>
+                    <input type="text" class="form-input" id="editTitle">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="editStatus">
+                        <option value="published">Published</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Firebase -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, deleteDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
             authDomain: "mega-tool-hub.firebaseapp.com",
             projectId: "mega-tool-hub",
+            storageBucket: "mega-tool-hub.firebasestorage.app",
+            messagingSenderId: "312297953340",
             appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
         };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        let globalVideos = [];
 
-        onAuthStateChanged(auth, user => { 
-            if(!user) window.location.href="login.html"; 
-            else { loadAdSettings(); fetchManageVideos(); }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.firebaseAdmin = { auth, db };
+        window.firebaseAdminFuncs = {
+            collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, limit, onSnapshot
+        };
+
+        // Real-time listener for videos
+        const videosRef = window.firebaseAdminFuncs.collection(db, 'videos');
+        window.firebaseAdminFuncs.onSnapshot(videosRef, (snapshot) => {
+            const videos = [];
+            snapshot.forEach(doc => {
+                videos.push({ id: doc.id, ...doc.data() });
+            });
+            if (videos.length > 0) {
+                window.updateVideosTable(videos);
+            }
+        });
+    </script>
+
+    <script>
+        // Sample Data
+        let videosData = [
+            { id: 1, title: "Building a YouTube Clone with HTML, CSS & JavaScript", channel: "Code Master", views: "125K", likes: "8.5K", status: "published", date: "2 days ago", thumb: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=80&h=45&fit=crop" },
+            { id: 2, title: "Learn Firebase in 10 Minutes - Quick Start Guide", channel: "Tech Tutorials", views: "89K", likes: "5.2K", status: "published", date: "5 hours ago", thumb: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=80&h=45&fit=crop" },
+            { id: 3, title: "Top 10 Programming Languages to Learn in 2024", channel: "Dev World", views: "250K", likes: "15K", status: "published", date: "1 week ago", thumb: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=80&h=45&fit=crop" },
+            { id: 4, title: "AI Revolution: How ChatGPT is Changing Everything", channel: "Future Tech", views: "1.2M", likes: "45K", status: "published", date: "3 days ago", thumb: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=80&h=45&fit=crop" },
+            { id: 5, title: "Gaming Setup Tour 2024 - Ultimate Battlestation", channel: "Gamer Zone", views: "45K", likes: "3.1K", status: "pending", date: "12 hours ago", thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=80&h=45&fit=crop" },
+            { id: 6, title: "Photography Tips for Beginners", channel: "Photo Art", views: "78K", likes: "6.8K", status: "published", date: "4 days ago", thumb: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=80&h=45&fit=crop" },
+        ];
+
+        const activities = [
+            { icon: "fa-upload", color: "#3498db", text: "<strong>New video uploaded</strong> by Code Master", time: "2 minutes ago" },
+            { icon: "fa-user", color: "#00d9a3", text: "<strong>New user registered</strong> - john_doe@email.com", time: "15 minutes ago" },
+            { icon: "fa-heart", color: "#e94560", text: "<strong>Video reached 1M views</strong> - AI Revolution", time: "1 hour ago" },
+            { icon: "fa-comment", color: "#ffc107", text: "<strong>New comment</strong> on "Building a YouTube Clone"", time: "2 hours ago" },
+            { icon: "fa-flag", color: "#ff4757", text: "<strong>Report submitted</strong> on video #4821", time: "3 hours ago" },
+            { icon: "fa-check", color: "#00d9a3", text: "<strong>Video approved</strong> - Gaming Setup Tour", time: "5 hours ago" },
+        ];
+
+        const channels = [
+            { name: "Code Master", subs: "245K", growth: "+12%", avatar: "CM" },
+            { name: "Tech Tutorials", subs: "189K", growth: "+8%", avatar: "TT" },
+            { name: "Dev World", subs: "320K", growth: "+15%", avatar: "DW" },
+            { name: "Future Tech", subs: "580K", growth: "+22%", avatar: "FT" },
+            { name: "Gamer Zone", subs: "95K", growth: "+5%", avatar: "GZ" },
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderVideosTable(videosData);
+            renderActivities();
+            renderChannels();
+            initCharts();
+            animateNumbers();
         });
 
-        async function fetchManageVideos() {
-            const tbody = document.getElementById('adminVideoList');
-            const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
-            const snap = await getDocs(q);
-            globalVideos = []; tbody.innerHTML = '';
-            
-            snap.forEach(doc => {
-                const v = doc.data(); v.id = doc.id; globalVideos.push(v);
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="p-3">
-                            <div class="font-medium text-gray-800 line-clamp-1">${v.title}</div>
-                            <div class="text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded inline-block mt-1 uppercase">${v.category || 'UNCATEGORIZED'}</div>
-                        </td>
-                        <td class="p-3 text-gray-500">${v.viewsText}</td>
-                        <td class="p-3 text-right space-x-2">
-                            <button onclick="editVideo('${v.id}')" class="text-blue-600 font-bold hover:underline">Edit</button>
-                            <button onclick="deleteVideo('${v.id}')" class="text-red-600 font-bold hover:underline">Del</button>
-                        </td>
-                    </tr>
-                `;
+        // Render Videos Table
+        function renderVideosTable(videos) {
+            const tbody = document.getElementById('videosTableBody');
+            tbody.innerHTML = videos.map(video => `
+                <tr>
+                    <td>
+                        <div class="video-cell">
+                            <img src="${video.thumb}" alt="" class="video-thumb">
+                            <div class="video-info-cell">
+                                <h4>${video.title}</h4>
+                                <p>ID: #${String(video.id).padStart(4, '0')}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${video.channel}</td>
+                    <td>${video.views}</td>
+                    <td>${video.likes}</td>
+                    <td><span class="status-badge status-${video.status}">${video.status}</span></td>
+                    <td>${video.date}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" onclick="editVideo(${video.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" onclick="deleteVideo(${video.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="action-btn" onclick="viewVideo(${video.id})" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Make available globally for Firebase callback
+        window.updateVideosTable = renderVideosTable;
+
+        // Render Activities
+        function renderActivities() {
+            const list = document.getElementById('activityList');
+            list.innerHTML = activities.map(act => `
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: ${act.color}20; color: ${act.color}">
+                        <i class="fas ${act.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">${act.text}</div>
+                        <div class="activity-time">${act.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Channels
+        function renderChannels() {
+            const list = document.getElementById('channelList');
+            list.innerHTML = channels.map((ch, i) => `
+                <div class="channel-item">
+                    <div class="channel-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
+                    <div class="channel-avatar">${ch.avatar}</div>
+                    <div class="channel-details">
+                        <div class="channel-name">${ch.name}</div>
+                        <div class="channel-stats">${ch.subs} subscribers</div>
+                    </div>
+                    <div class="channel-growth">${ch.growth}</div>
+                </div>
+            `).join('');
+        }
+
+        // Charts
+        function initCharts() {
+            // Views Chart
+            const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+            new Chart(viewsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Views',
+                        data: [45000, 52000, 48000, 61000, 58000, 72000, 68000],
+                        borderColor: '#e94560',
+                        backgroundColor: 'rgba(233, 69, 96, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#e94560',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#a0a0a0', callback: val => (val/1000) + 'K' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#a0a0a0' }
+                        }
+                    }
+                }
+            });
+
+            // Device Chart
+            const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+            new Chart(deviceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Desktop', 'Mobile', 'Tablet', 'TV'],
+                    datasets: [{
+                        data: [45, 35, 12, 8],
+                        backgroundColor: ['#e94560', '#3498db', '#00d9a3', '#ffc107'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#a0a0a0', padding: 20, usePointStyle: true }
+                        }
+                    }
+                }
             });
         }
 
-        window.editVideo = (id) => {
-            const vid = globalVideos.find(v => v.id === id);
-            document.getElementById('editVideoId').value = vid.id;
-            document.getElementById('vidTitle').value = vid.title;
-            document.getElementById('vidThumb').value = vid.thumbnail;
-            document.getElementById('vidEmbed').value = vid.embedUrl;
-            document.getElementById('vidCategory').value = vid.category || "";
-            document.getElementById('vidTags').value = vid.tags || "";
-            document.getElementById('vidDuration').value = vid.duration;
-            document.getElementById('vidViews').value = vid.viewsText;
-            
-            document.getElementById('saveBtn').innerText = "Update";
-            document.getElementById('cancelBtn').classList.remove('hidden');
-            document.getElementById('editModeBadge').classList.remove('hidden');
-        };
+        // Animate Numbers
+        function animateNumbers() {
+            const stats = [
+                { id: 'totalViews', target: 2400000, suffix: 'M', divisor: 1000000 },
+                { id: 'totalUsers', target: 18500, suffix: 'K', divisor: 1000 },
+                { id: 'totalVideos', target: 3842, suffix: '', divisor: 1 },
+                { id: 'totalLikes', target: 856000, suffix: 'K', divisor: 1000 }
+            ];
 
-        window.cancelEdit = () => {
-            document.getElementById('editVideoId').value = "";
-            document.getElementById('vidTitle').value = "";
-            document.getElementById('vidThumb').value = "";
-            document.getElementById('vidEmbed').value = "";
-            document.getElementById('vidCategory').value = "";
-            document.getElementById('vidTags').value = "";
-            document.getElementById('saveBtn').innerText = "Publish Video";
-            document.getElementById('cancelBtn').classList.add('hidden');
-            document.getElementById('editModeBadge').classList.add('hidden');
-        };
+            stats.forEach(stat => {
+                const el = document.getElementById(stat.id);
+                let current = 0;
+                const increment = stat.target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= stat.target) {
+                        current = stat.target;
+                        clearInterval(timer);
+                    }
+                    const val = (current / stat.divisor).toFixed(stat.divisor > 100 ? 1 : 0);
+                    el.textContent = val + stat.suffix;
+                }, 30);
+            });
+        }
 
-        window.deleteVideo = async (id) => {
-            if(confirm("Delete video?")) { await deleteDoc(doc(db, "videos", id)); fetchManageVideos(); }
-        };
+        // Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
 
-        window.saveVideo = async () => {
-            const editId = document.getElementById('editVideoId').value;
-            const data = {
-                title: document.getElementById('vidTitle').value,
-                thumbnail: document.getElementById('vidThumb').value,
-                embedUrl: document.getElementById('vidEmbed').value,
-                category: document.getElementById('vidCategory').value.trim() || "Others",
-                tags: document.getElementById('vidTags').value,
-                duration: document.getElementById('vidDuration').value || "10:00",
-                viewsText: document.getElementById('vidViews').value || "1M",
-                viewsCount: parseFloat(document.getElementById('vidViews').value) * (document.getElementById('vidViews').value.toUpperCase().includes('M') ? 1000000 : 1),
-                channelName: "Admin"
+        // Section Navigation
+        function showSection(section) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            showToast(`Navigated to ${section}`, 'info');
+        }
+
+        // Modal Functions
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            // Clear form
+            document.getElementById('videoTitle').value = '';
+            document.getElementById('videoDesc').value = '';
+            document.getElementById('videoThumb').value = '';
+            document.getElementById('videoChannel').value = '';
+        }
+
+        function addVideo() {
+            const title = document.getElementById('videoTitle').value;
+            const channel = document.getElementById('videoChannel').value;
+            const thumb = document.getElementById('videoThumb').value;
+
+            if (!title || !channel) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const newVideo = {
+                id: videosData.length + 1,
+                title: title,
+                channel: channel,
+                views: "0",
+                likes: "0",
+                status: "pending",
+                date: "Just now",
+                thumb: thumb || "https://via.placeholder.com/80x45/1a1a2e/e94560?text=NEW"
             };
 
-            if(!data.title) return alert("Title required!");
+            videosData.unshift(newVideo);
+            renderVideosTable(videosData);
+            closeUploadModal();
+            showToast('Video added successfully!', 'success');
 
-            if(editId) { await updateDoc(doc(db, "videos", editId), data); } 
-            else { data.timestamp = serverTimestamp(); await addDoc(collection(db, "videos"), data); }
-            
-            cancelEdit(); fetchManageVideos(); alert("Saved!");
-        };
-
-        async function loadAdSettings() {
-            const snap = await getDoc(doc(db, "settings", "ads"));
-            if(snap.exists()) {
-                const d = snap.data();
-                for(let i=1; i<=5; i++) {
-                    document.getElementById(`ad${i}Toggle`).checked = d[`ad${i}Show`] || false;
-                    document.getElementById(`ad${i}Code`).value = d[`ad${i}Code`] || "";
-                }
+            // Add to Firebase if available
+            if (window.firebaseAdmin) {
+                try {
+                    window.firebaseAdminFuncs.addDoc(
+                        window.firebaseAdminFuncs.collection(window.firebaseAdmin.db, 'videos'),
+                        newVideo
+                    );
+                } catch(e) { console.log('Firebase not ready'); }
             }
         }
 
-        window.saveAds = async () => {
-            const d = {};
-            for(let i=1; i<=5; i++) {
-                d[`ad${i}Show`] = document.getElementById(`ad${i}Toggle`).checked;
-                d[`ad${i}Code`] = document.getElementById(`ad${i}Code`).value;
-            }
-            await updateDoc(doc(db, "settings", "ads"), d).catch(async () => {
-                await getFirestore(app).collection("settings").doc("ads").set(d);
-            });
-            alert("Ads Saved!");
-        };
+        let editingId = null;
 
-        window.logout = () => signOut(auth).then(() => { window.location.href = "login.html"; });
+        function editVideo(id) {
+            const video = videosData.find(v => v.id === id);
+            if (!video) return;
+
+            editingId = id;
+            document.getElementById('editTitle').value = video.title;
+            document.getElementById('editStatus').value = video.status;
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingId = null;
+        }
+
+        function saveEdit() {
+            if (!editingId) return;
+
+            const video = videosData.find(v => v.id === editingId);
+            if (video) {
+                video.title = document.getElementById('editTitle').value;
+                video.status = document.getElementById('editStatus').value;
+                renderVideosTable(videosData);
+                showToast('Video updated successfully!', 'success');
+            }
+            closeEditModal();
+        }
+
+        function deleteVideo(id) {
+            if (confirm('Are you sure you want to delete this video?')) {
+                videosData = videosData.filter(v => v.id !== id);
+                renderVideosTable(videosData);
+                showToast('Video deleted successfully!', 'success');
+            }
+        }
+
+        function viewVideo(id) {
+            showToast(`Opening video #${id}...`, 'info');
+        }
+
+        function refreshData() {
+            const btn = event.currentTarget.querySelector('i');
+            btn.classList.add('fa-spin');
+            setTimeout(() => {
+                btn.classList.remove('fa-spin');
+                showToast('Data refreshed!', 'success');
+            }, 1000);
+        }
+
+        // Toast System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon ${type}">
+                    <i class="fas ${icons[type]}"></i>
+                </div>
+                <div>${message}</div>
+            `;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // User Menu
+        function toggleUserMenu() {
+            showToast('User menu clicked - Profile/Logout options', 'info');
+        }
+
+        // Global Search
+        document.getElementById('globalSearch').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const filtered = videosData.filter(v => 
+                v.title.toLowerCase().includes(query) || 
+                v.channel.toLowerCase().includes(query)
+            );
+            renderVideosTable(filtered);
+        });
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>
