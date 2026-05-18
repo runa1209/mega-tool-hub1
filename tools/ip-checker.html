@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>মাই আইপি চেকার | স্মার্ট ইউটিলিটি হাব</title>
+    <title>স্মার্ট আইপি চেকার</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans">
@@ -18,64 +18,62 @@
             
             <div id="loading" class="mt-8">
                 <div class="animate-spin inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mb-2"></div>
-                <p class="text-slate-500 italic">সার্ভার থেকে তথ্য আনা হচ্ছে...</p>
+                <p class="text-slate-500 italic">তথ্য খোঁজা হচ্ছে...</p>
             </div>
             
-            <div id="result" class="hidden mt-8 space-y-4">
-                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
-                    <p class="text-xs text-blue-400 uppercase tracking-widest font-bold mb-1">আপনার আইপি এড্রেস</p>
+            <div id="result" class="hidden mt-8 space-y-4 text-left">
+                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100 text-center">
+                    <p class="text-xs text-blue-400 uppercase tracking-widest font-bold mb-1">IP Address</p>
                     <p id="ip" class="text-2xl font-mono font-black text-blue-700"></p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-left">
-                        <p class="text-slate-400 text-xs font-bold uppercase mb-1">শহর</p>
-                        <p id="city" class="font-bold text-slate-700"></p>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-left">
-                        <p class="text-slate-400 text-xs font-bold uppercase mb-1">দেশ</p>
-                        <div class="flex items-center">
-                            <span id="flag" class="mr-2"></span>
-                            <p id="country" class="font-bold text-slate-700"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-left">
-                    <p class="text-slate-400 text-xs font-bold uppercase mb-1">ইন্টারনেট প্রোভাইডার (ISP)</p>
-                    <p id="isp" class="font-bold text-slate-700"></p>
+                <div class="space-y-2">
+                    <p class="text-sm"><b>শহর:</b> <span id="city"></span></p>
+                    <p class="text-sm"><b>দেশ:</b> <span id="country"></span></p>
+                    <p class="text-sm"><b>ইন্টারনেট (ISP):</b> <span id="isp"></span></p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        async function getIPInfo() {
+        async function fetchIPData() {
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            // সার্ভিস ১: ipwho.is
             try {
-                // আমরা এখানে 'ipwho.is' ব্যবহার করছি যা অনেক বেশি স্টেবল
-                const response = await fetch('https://ipwho.is/');
-                const data = await response.json();
-                
-                if(!data.success) throw new Error("Data fetch failed");
+                const res = await fetch('https://ipwho.is/');
+                const data = await res.json();
+                if(data.success) return displayData(data);
+            } catch (e) { console.log("Service 1 failed, trying Service 2..."); }
 
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('result').classList.remove('hidden');
-                
-                document.getElementById('ip').textContent = data.ip;
-                document.getElementById('city').textContent = data.city || "অজানা";
-                document.getElementById('country').textContent = data.country;
-                document.getElementById('flag').textContent = data.flag.img ? "" : data.flag.emoji;
-                document.getElementById('isp').textContent = data.connection.isp;
-
-            } catch (error) {
-                console.error(error);
-                document.getElementById('loading').innerHTML = `
-                    <p class="text-red-500 font-bold">দুঃখিত, তথ্য লোড করা যায়নি।</p>
-                    <p class="text-xs text-slate-400 mt-2">আপনার অ্যাড-ব্লকার অফ করে আবার চেষ্টা করুন।</p>
-                `;
+            // সার্ভিস ২: ipapi.co (ফিরে আসা যদি ১ ফেল করে)
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                return displayData({
+                    ip: data.ip,
+                    city: data.city,
+                    country: data.country_name,
+                    connection: { isp: data.org }
+                });
+            } catch (e) {
+                loading.innerHTML = `<p class="text-red-500 font-bold">দুঃখিত! ব্রাউজার তথ্য ব্লক করছে।</p>
+                                     <p class="text-xs text-slate-400 mt-2">Brave Shield অফ করে চেষ্টা করুন।</p>`;
             }
         }
-        getIPInfo();
+
+        function displayData(data) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('ip').textContent = data.ip;
+            document.getElementById('city').textContent = data.city;
+            document.getElementById('country').textContent = data.country;
+            document.getElementById('isp').textContent = data.connection.isp;
+        }
+
+        fetchIPData();
     </script>
 </body>
 </html>
