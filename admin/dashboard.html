@@ -1,460 +1,391 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Smart Utility Hub</title>
+    <title>Admin Dashboard - Mega Tool Hub</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
-                        secondary: { 50: '#fdf4ff', 500: '#d946ef', 600: '#c026d3' }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Toastify for notifications -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .sidebar-link { @apply flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-all cursor-pointer; }
-        .sidebar-link.active { @apply bg-primary-50 text-primary-600 font-semibold shadow-sm; }
-        .code-editor { font-family: 'Courier New', monospace; min-height: 160px; }
-        .stat-card { @apply bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all; }
+        .sidebar { transition: all 0.3s ease; }
+        .sidebar-collapsed { width: 70px; }
+        .sidebar-expanded { width: 260px; }
+        .main-content { transition: margin-left 0.3s ease; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .stat-card.green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .stat-card.orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .stat-card.blue {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .table-row:hover { background-color: #f8fafc; }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-100">
 
-    <!-- ==================== LOGIN SCREEN ==================== -->
-    <div id="login-screen" class="fixed inset-0 z-50 bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-gray-100">
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md mx-4">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-br from-primary-600 to-secondary-500 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-lg">
-                    <i class="fa-solid fa-shield-halved"></i>
+                <div class="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tools text-white text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">Admin Access</h2>
-                <p class="text-gray-500 text-sm mt-1">Smart Utility Hub Control Center</p>
+                <h1 class="text-2xl font-bold text-gray-900">Mega Tool Hub</h1>
+                <p class="text-gray-600 mt-2">Admin Dashboard</p>
             </div>
             
-            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+            <form id="login-form" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="admin-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="admin@example.com">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input type="email" id="login-email" required 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition"
+                        placeholder="admin@example.com">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="admin-password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="••••••••">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="login-password" required 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition"
+                            placeholder="••••••••">
+                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye" id="eye-icon"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
-                    Secure Login
+                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center">
+                    <span id="login-btn-text">Sign In</span>
+                    <div id="login-spinner" class="loading-spinner hidden ml-2" style="width: 20px; height: 20px; border-width: 2px;"></div>
                 </button>
             </form>
             
-            <button onclick="handleAdminGoogle()" class="w-full mt-4 py-3 border border-gray-200 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-all">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="G">
-                <span class="text-sm font-medium text-gray-700">Sign in with Google</span>
-            </button>
-            
-            <p class="mt-6 text-center text-sm text-gray-500">
-                <a href="index.html" class="text-primary-600 hover:underline font-medium"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Website</a>
+            <p class="text-center text-sm text-gray-500 mt-6">
+                <i class="fas fa-shield-alt mr-1"></i> Secure Admin Access Only
             </p>
         </div>
     </div>
 
-    <!-- ==================== ADMIN DASHBOARD ==================== -->
-    <div id="admin-dashboard" class="hidden min-h-screen flex">
-        
+    <!-- Dashboard (Hidden initially) -->
+    <div id="dashboard" class="hidden">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white border-r border-gray-200 fixed h-full z-40 hidden md:flex flex-col">
-            <div class="p-6 border-b border-gray-100">
-                <div class="flex items-center space-x-3">
-                    <div class="w-9 h-9 bg-gradient-to-br from-primary-600 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md">
-                        <i class="fa-solid fa-bolt"></i>
+        <aside id="sidebar" class="sidebar sidebar-expanded fixed left-0 top-0 h-full bg-gray-900 text-white z-40 overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-tools text-white"></i>
                     </div>
-                    <span class="font-bold text-lg tracking-tight">Admin</span>
+                    <span class="text-xl font-bold sidebar-text">Mega Tool Hub</span>
                 </div>
+                
+                <nav class="space-y-2">
+                    <button onclick="showSection('overview')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg bg-indigo-600 text-white transition">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span class="sidebar-text">Overview</span>
+                    </button>
+                    <button onclick="showSection('tools')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300 transition">
+                        <i class="fas fa-wrench w-5"></i>
+                        <span class="sidebar-text">Tools</span>
+                    </button>
+                    <button onclick="showSection('categories')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300 transition">
+                        <i class="fas fa-tags w-5"></i>
+                        <span class="sidebar-text">Categories</span>
+                    </button>
+                    <button onclick="showSection('ads')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300 transition">
+                        <i class="fas fa-ad w-5"></i>
+                        <span class="sidebar-text">Advertisements</span>
+                    </button>
+                    <button onclick="showSection('settings')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300 transition">
+                        <i class="fas fa-cog w-5"></i>
+                        <span class="sidebar-text">Settings</span>
+                    </button>
+                </nav>
             </div>
             
-            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-                <a onclick="showSection('dashboard')" class="sidebar-link active" id="nav-dashboard"><i class="fa-solid fa-chart-pie w-5 text-center"></i><span>Dashboard</span></a>
-                <a onclick="showSection('tools')" class="sidebar-link" id="nav-tools"><i class="fa-solid fa-screwdriver-wrench w-5 text-center"></i><span>Tools Manager</span></a>
-                <a onclick="showSection('ads')" class="sidebar-link" id="nav-ads"><i class="fa-solid fa-rectangle-ad w-5 text-center"></i><span>Ads Manager</span></a>
-                <a onclick="showSection('users')" class="sidebar-link" id="nav-users"><i class="fa-solid fa-users w-5 text-center"></i><span>Users</span></a>
-                <a onclick="showSection('settings')" class="sidebar-link" id="nav-settings"><i class="fa-solid fa-sliders w-5 text-center"></i><span>Settings</span></a>
-            </nav>
-            
-            <div class="p-4 border-t border-gray-100">
-                <div class="flex items-center space-x-3 mb-3 p-2 bg-gray-50 rounded-xl">
-                    <img id="admin-avatar" src="" class="w-10 h-10 rounded-full border border-gray-200">
-                    <div class="overflow-hidden">
-                        <div id="admin-name" class="text-sm font-semibold truncate">Admin User</div>
-                        <div class="text-xs text-gray-500">Super Admin</div>
-                    </div>
-                </div>
-                <button onclick="adminLogout()" class="w-full py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium text-left px-4">
-                    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
+                <button onclick="logout()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-red-400 transition">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span class="sidebar-text">Logout</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Mobile Header -->
-        <div class="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-4">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-bolt"></i></div>
-                <span class="font-bold">Admin</span>
-            </div>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="p-2 rounded-lg hover:bg-gray-100">
-                <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden fixed top-16 left-0 right-0 bg-white border-b border-gray-200 z-30 p-4 space-y-1 shadow-xl">
-            <a onclick="showSection('dashboard'); toggleMobileMenu()" class="block px-4 py-3 rounded-xl hover:bg-gray-50 font-medium">Dashboard</a>
-            <a onclick="showSection('tools'); toggleMobileMenu()" class="block px-4 py-3 rounded-xl hover:bg-gray-50 font-medium">Tools</a>
-            <a onclick="showSection('ads'); toggleMobileMenu()" class="block px-4 py-3 rounded-xl hover:bg-gray-50 font-medium">Ads</a>
-            <a onclick="showSection('users'); toggleMobileMenu()" class="block px-4 py-3 rounded-xl hover:bg-gray-50 font-medium">Users</a>
-            <a onclick="showSection('settings'); toggleMobileMenu()" class="block px-4 py-3 rounded-xl hover:bg-gray-50 font-medium">Settings</a>
-        </div>
-
         <!-- Main Content -->
-        <main class="flex-1 md:ml-64 pt-16 md:pt-0 min-h-screen bg-gray-50/50">
-            
-            <!-- DASHBOARD -->
-            <section id="section-dashboard" class="p-6 md:p-10">
-                <div class="flex justify-between items-end mb-8">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
-                        <p class="text-gray-500 mt-1">Overview of your platform performance</p>
-                    </div>
-                    <div class="text-sm text-gray-400" id="current-date"></div>
-                </div>
-
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 text-xl"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                            <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">Live</span>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800" id="stat-tools">0</div>
-                        <div class="text-sm text-gray-500 mt-1">Total Tools</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 text-xl"><i class="fa-solid fa-rectangle-ad"></i></div>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800" id="stat-ads">0</div>
-                        <div class="text-sm text-gray-500 mt-1">Active Ads</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 text-xl"><i class="fa-solid fa-users"></i></div>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800" id="stat-users">0</div>
-                        <div class="text-sm text-gray-500 mt-1">Registered Users</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 text-xl"><i class="fa-solid fa-eye"></i></div>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800" id="stat-visits">0</div>
-                        <div class="text-sm text-gray-500 mt-1">Today's Visits</div>
-                    </div>
-                </div>
-
-                <div class="grid lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h3 class="font-bold text-gray-800 mb-4">Recent Tools</h3>
-                        <div id="recent-tools-list" class="space-y-3">
-                            <div class="text-sm text-gray-400">Loading...</div>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-primary-600 to-secondary-600 rounded-2xl shadow-lg p-6 text-white">
-                        <h3 class="font-bold mb-2">Quick Actions</h3>
-                        <p class="text-primary-100 text-sm mb-6">Manage your site efficiently</p>
-                        <div class="space-y-3">
-                            <button onclick="showSection('tools'); openToolModal()" class="w-full py-3 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium hover:bg-white/30 transition-all text-left px-4">
-                                <i class="fa-solid fa-plus mr-2"></i> Add New Tool
-                            </button>
-                            <button onclick="showSection('ads'); openAdModal()" class="w-full py-3 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium hover:bg-white/30 transition-all text-left px-4">
-                                <i class="fa-solid fa-plus mr-2"></i> Add Advertisement
-                            </button>
-                            <button onclick="showSection('settings')" class="w-full py-3 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium hover:bg-white/30 transition-all text-left px-4">
-                                <i class="fa-solid fa-gear mr-2"></i> Site Settings
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TOOLS MANAGER -->
-            <section id="section-tools" class="hidden p-6 md:p-10">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">Tools Manager</h1>
-                        <p class="text-gray-500 mt-1">Create, edit, and organize your tools</p>
-                    </div>
-                    <button onclick="openToolModal()" class="px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i><span>Add Tool</span>
+        <main id="main-content" class="main-content ml-[260px] min-h-screen">
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm sticky top-0 z-30 px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-gray-100 text-gray-600">
+                        <i class="fas fa-bars text-xl"></i>
                     </button>
+                    <h2 id="page-title" class="text-2xl font-bold text-gray-900">Dashboard Overview</h2>
                 </div>
-                
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="bg-gray-50 border-b border-gray-100">
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p id="admin-email" class="text-sm font-medium text-gray-900">admin@example.com</p>
+                        <p class="text-xs text-gray-500">Administrator</p>
+                    </div>
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-indigo-600"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8">
+                <!-- Overview Section -->
+                <section id="section-overview" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="stat-card rounded-2xl p-6 text-white">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm opacity-80">Total Tools</p>
+                                    <h3 id="stat-tools" class="text-3xl font-bold mt-1">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-wrench text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card green rounded-2xl p-6 text-white">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm opacity-80">Categories</p>
+                                    <h3 id="stat-categories" class="text-3xl font-bold mt-1">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tags text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card orange rounded-2xl p-6 text-white">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm opacity-80">Active Ads</p>
+                                    <h3 id="stat-ads" class="text-3xl font-bold mt-1">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-ad text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card blue rounded-2xl p-6 text-white">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm opacity-80">Popular Tools</p>
+                                    <h3 id="stat-popular" class="text-3xl font-bold mt-1">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-fire text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button onclick="openModal('tool')" class="flex items-center space-x-3 p-4 border-2 border-dashed border-indigo-300 rounded-xl hover:border-indigo-500 hover:bg-indigo-50 transition text-indigo-600">
+                                <i class="fas fa-plus-circle text-2xl"></i>
+                                <span class="font-semibold">Add New Tool</span>
+                            </button>
+                            <button onclick="openModal('category')" class="flex items-center space-x-3 p-4 border-2 border-dashed border-green-300 rounded-xl hover:border-green-500 hover:bg-green-50 transition text-green-600">
+                                <i class="fas fa-plus-circle text-2xl"></i>
+                                <span class="font-semibold">Add Category</span>
+                            </button>
+                            <button onclick="openModal('ad')" class="flex items-center space-x-3 p-4 border-2 border-dashed border-orange-300 rounded-xl hover:border-orange-500 hover:bg-orange-50 transition text-orange-600">
+                                <i class="fas fa-plus-circle text-2xl"></i>
+                                <span class="font-semibold">Add Advertisement</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tools Section -->
+                <section id="section-tools" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <input type="text" id="tool-search" placeholder="Search tools..." 
+                                class="px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none w-64"
+                                onkeyup="searchTools()">
+                        </div>
+                        <button onclick="openModal('tool')" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Tool
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b">
                                 <tr>
-                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Tool</th>
-                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Category</th>
-                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
-                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Order</th>
-                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Actions</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Tool</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Popular</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="tools-table-body" class="divide-y divide-gray-100">
-                                <!-- Dynamic rows -->
+                            <tbody id="tools-table-body">
+                                <!-- Tools loaded dynamically -->
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- ADS MANAGER -->
-            <section id="section-ads" class="hidden p-6 md:p-10">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">Ads Manager</h1>
-                        <p class="text-gray-500 mt-1">Control advertisements and placements</p>
+                <!-- Categories Section -->
+                <section id="section-categories" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-900">Manage Categories</h3>
+                        <button onclick="openModal('category')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Category
+                        </button>
                     </div>
-                    <button onclick="openAdModal()" class="px-6 py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i><span>Add Ad</span>
-                    </button>
-                </div>
-                
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Ad Name</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Position</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ads-table-body" class="divide-y divide-gray-100">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                    
+                    <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Categories loaded dynamically -->
+                    </div>
+                </section>
 
-            <!-- USERS -->
-            <section id="section-users" class="hidden p-6 md:p-10">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Users</h1>
-                <p class="text-gray-500 mb-8">Manage registered users and admin roles</p>
-                
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600">User</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Role</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Joined</th>
-                                <th class="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body" class="divide-y divide-gray-100">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                <!-- Ads Section -->
+                <section id="section-ads" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-900">Manage Advertisements</h3>
+                        <button onclick="openModal('ad')" class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Ad
+                        </button>
+                    </div>
+                    
+                    <div id="ads-grid" class="space-y-6">
+                        <!-- Ads loaded dynamically -->
+                    </div>
+                </section>
 
-            <!-- SETTINGS -->
-            <section id="section-settings" class="hidden p-6 md:p-10">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Site Settings</h1>
-                <p class="text-gray-500 mb-8">Customize your website globally</p>
-                
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-2xl">
-                    <form onsubmit="saveSettings(event)" class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Website Name</label>
-                            <input type="text" id="setting-siteName" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="Smart Utility Hub">
-                        </div>
+                <!-- Settings Section -->
+                <section id="section-settings" class="hidden space-y-6">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 max-w-2xl">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6">Site Settings</h3>
                         
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Primary Color (Tailwind suffix)</label>
-                            <input type="text" id="setting-primaryColor" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="e.g. blue-600">
-                            <p class="text-xs text-gray-400 mt-1">Used for buttons and accents across the site</p>
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="space-y-4">
                             <div>
-                                <div class="font-medium text-gray-800">Global Ad Blocker</div>
-                                <div class="text-sm text-gray-500">Hide all advertisement slots site-wide</div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
+                                <input type="text" id="setting-site-name" value="Mega Tool Hub" 
+                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="setting-adBlocker" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                            </label>
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
                             <div>
-                                <div class="font-medium text-gray-800">Maintenance Mode</div>
-                                <div class="text-sm text-gray-500">Show maintenance message to visitors</div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Site Description</label>
+                                <textarea id="setting-site-desc" rows="3" 
+                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">Free online tools for everyone</textarea>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="setting-maintenance" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
-                            </label>
-                        </div>
-                        
-                        <div class="pt-4">
-                            <button type="submit" class="px-8 py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
-                                Save Changes
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Analytics ID (Optional)</label>
+                                <input type="text" id="setting-analytics" placeholder="G-XXXXXXXXXX" 
+                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                            </div>
+                            <button onclick="saveSettings()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                                Save Settings
                             </button>
                         </div>
-                    </form>
-                </div>
-            </section>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
-    <!-- ==================== MODALS ==================== -->
-
-    <!-- Tool Add/Edit Modal -->
-    <div id="tool-modal-overlay" class="fixed inset-0 z-[60] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeToolModal()"></div>
-        <div class="absolute inset-4 md:inset-8 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-            <div class="flex items-center justify-between px-8 py-5 border-b border-gray-100 bg-white">
-                <h3 class="text-xl font-bold text-gray-800" id="tool-modal-title">Add New Tool</h3>
-                <button onclick="closeToolModal()" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
-                    <i class="fa-solid fa-xmark text-lg text-gray-600"></i>
-                </button>
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content p-6 m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Add New</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
-            <div class="flex-1 overflow-y-auto p-8 bg-gray-50/30">
-                <form id="tool-form" onsubmit="saveTool(event)" class="max-w-5xl mx-auto space-y-6">
-                    <input type="hidden" id="tool-id">
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Tool Name *</label>
-                            <input type="text" id="tool-name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="Advanced Calculator">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <input type="text" id="tool-category" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="Calculator, Converter, Generator">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                        <input type="text" id="tool-desc" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="Short description for the tool card">
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Icon Class (FontAwesome)</label>
-                            <input type="text" id="tool-icon" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="fa-solid fa-calculator">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                            <input type="number" id="tool-order" value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center space-x-3 p-4 bg-primary-50 rounded-xl border border-primary-100 w-fit">
-                        <input type="checkbox" id="tool-status" checked class="w-5 h-5 text-primary-600 rounded border-gray-300 focus:ring-primary-500">
-                        <label for="tool-status" class="text-sm font-medium text-primary-800">Active (visible on website)</label>
-                    </div>
-                    
-                    <div class="grid lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">HTML Content</label>
-                            <textarea id="tool-html" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all code-editor" placeholder="<div class='calculator'>..."></textarea>
-                        </div>
-                        <div class="lg:col-span-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">CSS Styles</label>
-                            <textarea id="tool-css" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all code-editor" placeholder=".tool { background: #fff; }"></textarea>
-                        </div>
-                        <div class="lg:col-span-1">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">JavaScript Logic</label>
-                            <textarea id="tool-js" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all code-editor" placeholder="function calculate() { ... }"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end space-x-4 pt-4 border-t border-gray-100">
-                        <button type="button" onclick="closeToolModal()" class="px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 font-medium transition-all">Cancel</button>
-                        <button type="submit" class="px-8 py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all">Save Tool</button>
-                    </div>
-                </form>
+            <div id="modal-body">
+                <!-- Dynamic form content -->
             </div>
         </div>
     </div>
 
-    <!-- Ad Add/Edit Modal -->
-    <div id="ad-modal-overlay" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeAdModal()"></div>
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 relative z-10">
-            <h3 class="text-xl font-bold text-gray-800 mb-6" id="ad-modal-title">Add Advertisement</h3>
-            <form id="ad-form" onsubmit="saveAd(event)" class="space-y-5">
-                <input type="hidden" id="ad-id">
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ad Name *</label>
-                    <input type="text" id="ad-name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="Google Adsense Header">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Placement Position</label>
-                    <select id="ad-position" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all bg-white">
-                        <option value="top">Top Banner (Below Navbar)</option>
-                        <option value="bottom">Bottom Banner (Above Footer)</option>
-                        <option value="sidebar">Sidebar (Future Use)</option>
-                        <option value="popup">Popup Modal</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ad Code (HTML/JS) *</label>
-                    <textarea id="ad-code" rows="6" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all code-editor" placeholder="<script async src='...'></script>"></textarea>
-                    <p class="text-xs text-gray-400 mt-1">Paste your Adsense, adsterra, or custom HTML code here</p>
-                </div>
-                
-                <div class="flex items-center space-x-3 p-4 bg-primary-50 rounded-xl border border-primary-100 w-fit">
-                    <input type="checkbox" id="ad-status" checked class="w-5 h-5 text-primary-600 rounded border-gray-300 focus:ring-primary-500">
-                    <label for="ad-status" class="text-sm font-medium text-primary-800">Active</label>
-                </div>
-                
-                <div class="flex justify-end space-x-4 pt-2">
-                    <button type="button" onclick="closeAdModal()" class="px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 font-medium transition-all">Cancel</button>
-                    <button type="submit" class="px-8 py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all">Save Ad</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 z-[80] transform translate-y-24 opacity-0 transition-all duration-300">
-        <div class="bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 border border-gray-700">
-            <i id="toast-icon" class="fa-solid fa-circle-check text-green-400 text-lg"></i>
-            <span id="toast-message" class="font-medium text-sm">Operation successful</span>
-        </div>
-    </div>
-
-    <!-- ==================== FIREBASE & LOGIC ==================== -->
+    <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, orderBy, getDocs, getDoc, setDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            getDocs, 
+            getDoc,
+            addDoc, 
+            updateDoc, 
+            deleteDoc,
+            query,
+            orderBy,
+            where,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ==================== CONFIGURE YOUR FIREBASE HERE ====================
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
             authDomain: "mega-tool-hub.firebaseapp.com",
@@ -463,454 +394,606 @@
             messagingSenderId: "312297953340",
             appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
         };
-        // =====================================================================
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.fbAuth = auth;
-        window.fbDb = db;
-        window.fbSignIn = signInWithEmailAndPassword;
-        window.fbGoogleSignIn = signInWithPopup;
-        window.fbGoogleProvider = GoogleAuthProvider;
-        window.fbSignOut = signOut;
-        window.fbOnAuthStateChanged = onAuthStateChanged;
-        window.fbCollection = collection;
-        window.fbQuery = query;
-        window.fbWhere = where;
-        window.fbOrderBy = orderBy;
-        window.fbGetDocs = getDocs;
-        window.fbGetDoc = getDoc;
-        window.fbSetDoc = setDoc;
-        window.fbDoc = doc;
-        window.fbDeleteDoc = deleteDoc;
-        window.fbOnSnapshot = onSnapshot;
+        // Global state
+        let currentSection = 'overview';
+        let editingId = null;
+        let editingType = null;
 
-        // Admin Auth Guard
-        window.fbOnAuthStateChanged(auth, async (user) => {
-            if (!user) {
+        // Auth State Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('admin-email').textContent = user.email;
+                loadAllData();
+            } else {
                 document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('admin-dashboard').classList.add('hidden');
-                return;
+                document.getElementById('dashboard').classList.add('hidden');
             }
-            
-            const userDoc = await window.fbGetDoc(window.fbDoc(window.fbDb, 'users', user.uid));
-            if (!userDoc.exists() || userDoc.data().role !== 'admin') {
-                await window.fbSignOut(window.fbAuth);
-                showToast('Access denied. Admin privileges required.', 'error');
-                return;
-            }
-            
-            // Authorized Admin
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.remove('hidden');
-            document.getElementById('admin-name').textContent = user.displayName || user.email;
-            document.getElementById('admin-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=random`;
-            
-            // Set date
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            
-            // Load all data
-            loadDashboardStats();
-            loadToolsTable();
-            loadAdsTable();
-            loadUsersTable();
-            loadSettingsForm();
         });
-    </script>
 
-    <script>
-        // ==================== UI CONTROLLERS ====================
+        // Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btnText = document.getElementById('login-btn-text');
+            const spinner = document.getElementById('login-spinner');
+            
+            btnText.textContent = 'Signing in...';
+            spinner.classList.remove('hidden');
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast('Login successful!', 'success');
+            } catch (error) {
+                showToast('Login failed: ' + error.message, 'error');
+                btnText.textContent = 'Sign In';
+                spinner.classList.add('hidden');
+            }
+        });
 
-        function showSection(section) {
-            document.querySelectorAll('section[id^="section-"]').forEach(s => s.classList.add('hidden'));
+        // Logout
+        window.logout = async () => {
+            await signOut(auth);
+            showToast('Logged out successfully', 'success');
+        };
+
+        // Toggle Password
+        window.togglePassword = () => {
+            const input = document.getElementById('login-password');
+            const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        };
+
+        // Sidebar Toggle
+        let sidebarCollapsed = false;
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main-content');
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.remove('sidebar-expanded');
+                sidebar.classList.add('sidebar-collapsed');
+                main.style.marginLeft = '70px';
+                document.querySelectorAll('.sidebar-text').forEach(el => el.style.display = 'none');
+            } else {
+                sidebar.classList.remove('sidebar-collapsed');
+                sidebar.classList.add('sidebar-expanded');
+                main.style.marginLeft = '260px';
+                document.querySelectorAll('.sidebar-text').forEach(el => el.style.display = 'inline');
+            }
+        };
+
+        // Show Section
+        window.showSection = (section) => {
+            currentSection = section;
+            
+            // Hide all sections
+            document.querySelectorAll('section[id^="section-"]').forEach(el => el.classList.add('hidden'));
             document.getElementById(`section-${section}`).classList.remove('hidden');
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            const nav = document.getElementById(`nav-${section}`);
-            if (nav) nav.classList.add('active');
+            
+            // Update title
+            const titles = {
+                overview: 'Dashboard Overview',
+                tools: 'Manage Tools',
+                categories: 'Manage Categories',
+                ads: 'Manage Advertisements',
+                settings: 'Site Settings'
+            };
+            document.getElementById('page-title').textContent = titles[section];
+            
+            // Update nav active state
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('text-gray-300', 'hover:bg-gray-800');
+            });
+            event.currentTarget.classList.remove('text-gray-300', 'hover:bg-gray-800');
+            event.currentTarget.classList.add('bg-indigo-600', 'text-white');
+            
+            // Reload data for section
+            if (section === 'tools') loadTools();
+            if (section === 'categories') loadCategories();
+            if (section === 'ads') loadAds();
+            if (section === 'overview') loadStats();
+        };
+
+        // Load All Data
+        async function loadAllData() {
+            await loadStats();
+            await loadTools();
+            await loadCategories();
+            await loadAds();
         }
 
-        function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        }
-
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = msg;
-            document.getElementById('toast-icon').className = type === 'error' 
-                ? 'fa-solid fa-circle-exclamation text-red-400 text-lg' 
-                : 'fa-solid fa-circle-check text-green-400 text-lg';
-            toast.classList.remove('translate-y-24', 'opacity-0');
-            setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3000);
-        }
-
-        // Auth Handlers
-        async function handleAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
+        // Load Stats
+        async function loadStats() {
             try {
-                await window.fbSignIn(window.fbAuth, email, password);
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function handleAdminGoogle() {
-            try {
-                await window.fbGoogleSignIn(window.fbAuth, new window.fbGoogleProvider());
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function adminLogout() {
-            await window.fbSignOut(window.fbAuth);
-            showToast('Logged out successfully');
-        }
-
-        // ==================== DASHBOARD ====================
-
-        async function loadDashboardStats() {
-            try {
-                // Total tools
-                const toolsSnap = await window.fbGetDocs(window.fbCollection(window.fbDb, 'tools'));
+                const toolsSnap = await getDocs(collection(db, 'tools'));
+                const catSnap = await getDocs(collection(db, 'categories'));
+                const adsSnap = await getDocs(query(collection(db, 'ads'), where('active', '==', true)));
+                const popularSnap = await getDocs(query(collection(db, 'tools'), where('popular', '==', true)));
+                
                 document.getElementById('stat-tools').textContent = toolsSnap.size;
-                
-                // Active ads
-                const adsQ = window.fbQuery(window.fbCollection(window.fbDb, 'ads'), window.fbWhere('status', '==', 'active'));
-                const adsSnap = await window.fbGetDocs(adsQ);
+                document.getElementById('stat-categories').textContent = catSnap.size;
                 document.getElementById('stat-ads').textContent = adsSnap.size;
-                
-                // Total users
-                const usersSnap = await window.fbGetDocs(window.fbCollection(window.fbDb, 'users'));
-                document.getElementById('stat-users').textContent = usersSnap.size;
-                
-                // Visits (stored in settings/visits)
-                const visitsDoc = await window.fbGetDoc(window.fbDoc(window.fbDb, 'settings', 'visits'));
-                document.getElementById('stat-visits').textContent = visitsDoc.exists() ? (visitsDoc.data().today || 0) : 0;
-                
-                // Recent tools list
-                const recentList = document.getElementById('recent-tools-list');
-                let html = '';
-                toolsSnap.forEach(d => {
-                    const t = d.data();
-                    html += `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-primary-200 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600 text-sm"><i class="fa-solid ${t.icon || 'fa-wrench'}"></i></div>
-                                <span class="text-sm font-medium text-gray-700">${t.name}</span>
-                            </div>
-                            <span class="text-xs px-2 py-1 rounded-full ${t.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">${t.status}</span>
-                        </div>
-                    `;
-                });
-                recentList.innerHTML = html || '<div class="text-sm text-gray-400">No tools yet</div>';
-            } catch (e) {
-                console.error('Dashboard error', e);
+                document.getElementById('stat-popular').textContent = popularSnap.size;
+            } catch (error) {
+                console.error('Error loading stats:', error);
             }
         }
 
-        // ==================== TOOLS CRUD ====================
-
-        async function loadToolsTable() {
-            const tbody = document.getElementById('tools-table-body');
-            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-400"><div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div></td></tr>';
-            
+        // Load Tools
+        async function loadTools() {
             try {
-                const snap = await window.fbGetDocs(window.fbQuery(window.fbCollection(window.fbDb, 'tools'), window.fbOrderBy('order', 'asc')));
+                const snapshot = await getDocs(query(collection(db, 'tools'), orderBy('createdAt', 'desc')));
+                const tbody = document.getElementById('tools-table-body');
                 tbody.innerHTML = '';
                 
-                snap.forEach(doc => {
-                    const t = doc.data();
+                snapshot.forEach(doc => {
+                    const tool = doc.data();
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50 transition-colors';
+                    tr.className = 'table-row border-b transition';
                     tr.innerHTML = `
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl flex items-center justify-center text-primary-600 shadow-sm">
-                                    <i class="fa-solid ${t.icon || 'fa-wrench'}"></i>
+                                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                    <i class="${tool.icon} text-indigo-600"></i>
                                 </div>
                                 <div>
-                                    <div class="font-semibold text-gray-800">${t.name}</div>
-                                    <div class="text-xs text-gray-500 truncate max-w-[200px]">${t.description || 'No description'}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">${t.category || '-'}</td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${t.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                ${t.status}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600 font-mono">${t.order ?? 0}</td>
-                        <td class="px-6 py-4 text-right space-x-3">
-                            <button onclick="editTool('${doc.id}')" class="text-primary-600 hover:text-primary-800 text-sm font-semibold transition-colors">Edit</button>
-                            <button onclick="deleteTool('${doc.id}')" class="text-red-500 hover:text-red-700 text-sm font-semibold transition-colors">Delete</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">Error: ${err.message}</td></tr>`;
-            }
-        }
-
-        function openToolModal(id = null) {
-            document.getElementById('tool-form').reset();
-            document.getElementById('tool-id').value = id || '';
-            document.getElementById('tool-modal-title').textContent = id ? 'Edit Tool' : 'Add New Tool';
-            if (!id) {
-                document.getElementById('tool-status').checked = true;
-                document.getElementById('tool-order').value = '0';
-            }
-            document.getElementById('tool-modal-overlay').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeToolModal() {
-            document.getElementById('tool-modal-overlay').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        async function editTool(id) {
-            const snap = await window.fbGetDoc(window.fbDoc(window.fbDb, 'tools', id));
-            if (!snap.exists()) return showToast('Tool not found', 'error');
-            
-            const t = snap.data();
-            document.getElementById('tool-id').value = id;
-            document.getElementById('tool-name').value = t.name || '';
-            document.getElementById('tool-category').value = t.category || '';
-            document.getElementById('tool-desc').value = t.description || '';
-            document.getElementById('tool-icon').value = t.icon || '';
-            document.getElementById('tool-order').value = t.order ?? 0;
-            document.getElementById('tool-status').checked = t.status === 'active';
-            document.getElementById('tool-html').value = t.htmlContent || '';
-            document.getElementById('tool-css').value = t.cssContent || '';
-            document.getElementById('tool-js').value = t.jsContent || '';
-            
-            document.getElementById('tool-modal-title').textContent = 'Edit Tool';
-            document.getElementById('tool-modal-overlay').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        async function saveTool(e) {
-            e.preventDefault();
-            const id = document.getElementById('tool-id').value;
-            const data = {
-                name: document.getElementById('tool-name').value,
-                category: document.getElementById('tool-category').value,
-                description: document.getElementById('tool-desc').value,
-                icon: document.getElementById('tool-icon').value,
-                order: parseInt(document.getElementById('tool-order').value) || 0,
-                status: document.getElementById('tool-status').checked ? 'active' : 'inactive',
-                htmlContent: document.getElementById('tool-html').value,
-                cssContent: document.getElementById('tool-css').value,
-                jsContent: document.getElementById('tool-js').value,
-                updatedAt: new Date()
-            };
-            if (!id) data.createdAt = new Date();
-            
-            try {
-                await window.fbSetDoc(window.fbDoc(window.fbDb, 'tools', id || crypto.randomUUID()), data, { merge: true });
-                closeToolModal();
-                loadToolsTable();
-                loadDashboardStats();
-                showToast(id ? 'Tool updated successfully' : 'Tool created successfully');
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function deleteTool(id) {
-            if (!confirm('Are you sure? This will permanently delete the tool.')) return;
-            try {
-                await window.fbDeleteDoc(window.fbDoc(window.fbDb, 'tools', id));
-                loadToolsTable();
-                loadDashboardStats();
-                showToast('Tool deleted');
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        // ==================== ADS CRUD ====================
-
-        async function loadAdsTable() {
-            const tbody = document.getElementById('ads-table-body');
-            try {
-                const snap = await window.fbGetDocs(window.fbCollection(window.fbDb, 'ads'));
-                tbody.innerHTML = '';
-                snap.forEach(doc => {
-                    const ad = doc.data();
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50 transition-colors';
-                    tr.innerHTML = `
-                        <td class="px-6 py-4">
-                            <div class="font-semibold text-gray-800">${ad.name}</div>
-                            <div class="text-xs text-gray-400 mt-1 truncate max-w-[250px]">${ad.code.substring(0, 60)}...</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
-                                ${ad.position}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ad.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                ${ad.status}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-right space-x-3">
-                            <button onclick="editAd('${doc.id}')" class="text-primary-600 hover:text-primary-800 text-sm font-semibold transition-colors">Edit</button>
-                            <button onclick="deleteAd('${doc.id}')" class="text-red-500 hover:text-red-700 text-sm font-semibold transition-colors">Delete</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-red-500">${err.message}</td></tr>`;
-            }
-        }
-
-        function openAdModal(id = null) {
-            document.getElementById('ad-form').reset();
-            document.getElementById('ad-id').value = id || '';
-            document.getElementById('ad-modal-title').textContent = id ? 'Edit Advertisement' : 'Add Advertisement';
-            document.getElementById('ad-status').checked = true;
-            document.getElementById('ad-modal-overlay').classList.remove('hidden');
-        }
-
-        function closeAdModal() {
-            document.getElementById('ad-modal-overlay').classList.add('hidden');
-        }
-
-        async function editAd(id) {
-            const snap = await window.fbGetDoc(window.fbDoc(window.fbDb, 'ads', id));
-            if (!snap.exists()) return;
-            const ad = snap.data();
-            document.getElementById('ad-id').value = id;
-            document.getElementById('ad-name').value = ad.name;
-            document.getElementById('ad-position').value = ad.position;
-            document.getElementById('ad-code').value = ad.code;
-            document.getElementById('ad-status').checked = ad.status === 'active';
-            document.getElementById('ad-modal-title').textContent = 'Edit Advertisement';
-            document.getElementById('ad-modal-overlay').classList.remove('hidden');
-        }
-
-        async function saveAd(e) {
-            e.preventDefault();
-            const id = document.getElementById('ad-id').value;
-            const data = {
-                name: document.getElementById('ad-name').value,
-                position: document.getElementById('ad-position').value,
-                code: document.getElementById('ad-code').value,
-                status: document.getElementById('ad-status').checked ? 'active' : 'inactive',
-                updatedAt: new Date()
-            };
-            if (!id) data.createdAt = new Date();
-            
-            try {
-                await window.fbSetDoc(window.fbDoc(window.fbDb, 'ads', id || crypto.randomUUID()), data, { merge: true });
-                closeAdModal();
-                loadAdsTable();
-                loadDashboardStats();
-                showToast('Advertisement saved');
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function deleteAd(id) {
-            if (!confirm('Delete this advertisement?')) return;
-            await window.fbDeleteDoc(window.fbDoc(window.fbDb, 'ads', id));
-            loadAdsTable();
-            loadDashboardStats();
-            showToast('Ad deleted');
-        }
-
-        // ==================== USERS ====================
-
-        async function loadUsersTable() {
-            const tbody = document.getElementById('users-table-body');
-            try {
-                const snap = await window.fbGetDocs(window.fbCollection(window.fbDb, 'users'));
-                tbody.innerHTML = '';
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    const date = u.createdAt ? new Date(u.createdAt.toDate()).toLocaleDateString() : '-';
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50 transition-colors';
-                    tr.innerHTML = `
-                        <td class="px-6 py-4">
-                            <div class="flex items-center space-x-3">
-                                <img src="${u.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.email)}&background=random`}" class="w-10 h-10 rounded-full border border-gray-200">
-                                <div>
-                                    <div class="text-sm font-semibold text-gray-800">${u.name || u.email}</div>
-                                    <div class="text-xs text-gray-500">${u.email}</div>
+                                    <p class="font-semibold text-gray-900">${tool.name}</p>
+                                    <p class="text-sm text-gray-500 truncate max-w-xs">${tool.description}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
-                                ${u.role || 'user'}
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">${tool.category || 'N/A'}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 ${tool.active !== false ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-sm font-medium">
+                                ${tool.active !== false ? 'Active' : 'Inactive'}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">${date}</td>
+                        <td class="px-6 py-4">
+                            ${tool.popular ? '<i class="fas fa-fire text-orange-500"></i>' : '<i class="fas fa-minus text-gray-300"></i>'}
+                        </td>
                         <td class="px-6 py-4 text-right">
-                            <button onclick="toggleUserRole('${doc.id}', '${u.role}')" class="text-sm font-semibold ${u.role === 'admin' ? 'text-orange-600 hover:text-orange-800' : 'text-primary-600 hover:text-primary-800'} transition-colors">
-                                ${u.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+                            <button onclick="editTool('${doc.id}')" class="text-indigo-600 hover:text-indigo-800 mr-3">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteItem('tools', '${doc.id}')" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-red-500">${err.message}</td></tr>`;
+            } catch (error) {
+                console.error('Error loading tools:', error);
             }
         }
 
-        async function toggleUserRole(uid, currentRole) {
-            const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        // Load Categories
+        async function loadCategories() {
             try {
-                await window.fbSetDoc(window.fbDoc(window.fbDb, 'users', uid), { role: newRole }, { merge: true });
-                loadUsersTable();
-                showToast(`User is now ${newRole}`);
-            } catch (err) {
-                showToast(err.message, 'error');
+                const snapshot = await getDocs(collection(db, 'categories'));
+                const container = document.getElementById('categories-grid');
+                container.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const cat = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'bg-white rounded-xl shadow-sm p-6 border border-gray-100';
+                    div.innerHTML = `
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="${cat.icon} text-green-600 text-xl"></i>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="editCategory('${doc.id}')" class="text-indigo-600 hover:text-indigo-800">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteItem('categories', '${doc.id}')" class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900">${cat.name}</h4>
+                        <p class="text-sm text-gray-500 mt-1">ID: ${doc.id}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
             }
         }
 
-        // ==================== SETTINGS ====================
-
-        async function loadSettingsForm() {
+        // Load Ads
+        async function loadAds() {
             try {
-                const snap = await window.fbGetDoc(window.fbDoc(window.fbDb, 'settings', 'site'));
-                if (!snap.exists()) return;
-                const s = snap.data();
-                document.getElementById('setting-siteName').value = s.siteName || '';
-                document.getElementById('setting-primaryColor').value = s.primaryColor || '';
-                document.getElementById('setting-adBlocker').checked = s.adBlockerEnabled || false;
-                document.getElementById('setting-maintenance').checked = s.maintenanceMode || false;
-            } catch (e) { console.error(e); }
+                const snapshot = await getDocs(collection(db, 'ads'));
+                const container = document.getElementById('ads-grid');
+                container.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const ad = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'bg-white rounded-xl shadow-sm p-6 border border-gray-100';
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">${ad.title}</h4>
+                                <span class="px-3 py-1 ${ad.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-sm font-medium mt-2 inline-block">
+                                    ${ad.active ? 'Active' : 'Inactive'}
+                                </span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="editAd('${doc.id}')" class="text-indigo-600 hover:text-indigo-800">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteItem('ads', '${doc.id}')" class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-600 mb-2"><strong>Position:</strong> ${ad.position}</p>
+                            <p class="text-sm text-gray-600 mb-2"><strong>Link:</strong> <a href="${ad.link}" target="_blank" class="text-indigo-600">${ad.link}</a></p>
+                            <div class="mt-2 p-2 bg-white rounded border text-xs text-gray-500 font-mono overflow-x-auto">
+                                ${ad.code || 'No HTML code'}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading ads:', error);
+            }
         }
 
-        async function saveSettings(e) {
+        // Open Modal
+        window.openModal = (type, id = null) => {
+            editingId = id;
+            editingType = type;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            modal.classList.add('active');
+            
+            if (type === 'tool') {
+                title.textContent = id ? 'Edit Tool' : 'Add New Tool';
+                body.innerHTML = `
+                    <form id="tool-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tool Name *</label>
+                            <input type="text" id="tool-name" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                            <textarea id="tool-desc" required rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Icon Class (Font Awesome)</label>
+                                <input type="text" id="tool-icon" placeholder="fas fa-calculator" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Icon Category</label>
+                                <select id="tool-icon-category" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                                    <option value="calculator">Calculator</option>
+                                    <option value="security">Security</option>
+                                    <option value="text">Text</option>
+                                    <option value="converter">Converter</option>
+                                    <option value="developer">Developer</option>
+                                    <option value="default">Default</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
+                                <input type="text" id="tool-category" placeholder="calculators" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Time/Label</label>
+                                <input type="text" id="tool-time" placeholder="Instant" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="tool-popular" class="w-5 h-5 text-indigo-600 rounded">
+                                <span class="text-sm font-medium text-gray-700">Mark as Popular</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="tool-active" checked class="w-5 h-5 text-indigo-600 rounded">
+                                <span class="text-sm font-medium text-gray-700">Active</span>
+                            </label>
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                                ${id ? 'Update' : 'Create'} Tool
+                            </button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('tool-form').addEventListener('submit', saveTool);
+                
+                if (id) loadToolData(id);
+            } else if (type === 'category') {
+                title.textContent = id ? 'Edit Category' : 'Add New Category';
+                body.innerHTML = `
+                    <form id="category-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category ID *</label>
+                            <input type="text" id="cat-id" required ${id ? 'readonly' : ''} class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category Name *</label>
+                            <input type="text" id="cat-name" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Icon Class (Font Awesome)</label>
+                            <input type="text" id="cat-icon" placeholder="fas fa-calculator" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                ${id ? 'Update' : 'Create'} Category
+                            </button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('category-form').addEventListener('submit', saveCategory);
+                
+                if (id) loadCategoryData(id);
+            } else if (type === 'ad') {
+                title.textContent = id ? 'Edit Ad' : 'Add New Advertisement';
+                body.innerHTML = `
+                    <form id="ad-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ad Title *</label>
+                            <input type="text" id="ad-title" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Position *</label>
+                            <select id="ad-position" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                                <option value="top">Top Banner</option>
+                                <option value="middle">Middle Banner</option>
+                                <option value="bottom">Bottom Banner</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
+                            <input type="url" id="ad-link" placeholder="https://example.com" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ad HTML Code (Optional)</label>
+                            <textarea id="ad-code" rows="4" placeholder="<script>...</script>" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 outline-none font-mono text-sm"></textarea>
+                        </div>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="ad-active" checked class="w-5 h-5 text-indigo-600 rounded">
+                            <span class="text-sm font-medium text-gray-700">Active</span>
+                        </label>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="closeModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition">
+                                ${id ? 'Update' : 'Create'} Ad
+                            </button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('ad-form').addEventListener('submit', saveAd);
+                
+                if (id) loadAdData(id);
+            }
+        };
+
+        // Close Modal
+        window.closeModal = () => {
+            document.getElementById('modal').classList.remove('active');
+            editingId = null;
+            editingType = null;
+        };
+
+        // Load Tool Data for Edit
+        async function loadToolData(id) {
+            const docSnap = await getDoc(doc(db, 'tools', id));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('tool-name').value = data.name || '';
+                document.getElementById('tool-desc').value = data.description || '';
+                document.getElementById('tool-icon').value = data.icon || '';
+                document.getElementById('tool-icon-category').value = data.iconCategory || 'default';
+                document.getElementById('tool-category').value = data.category || '';
+                document.getElementById('tool-time').value = data.time || '';
+                document.getElementById('tool-popular').checked = data.popular || false;
+                document.getElementById('tool-active').checked = data.active !== false;
+            }
+        }
+
+        // Load Category Data for Edit
+        async function loadCategoryData(id) {
+            const docSnap = await getDoc(doc(db, 'categories', id));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('cat-id').value = id;
+                document.getElementById('cat-name').value = data.name || '';
+                document.getElementById('cat-icon').value = data.icon || '';
+            }
+        }
+
+        // Load Ad Data for Edit
+        async function loadAdData(id) {
+            const docSnap = await getDoc(doc(db, 'ads', id));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('ad-title').value = data.title || '';
+                document.getElementById('ad-position').value = data.position || 'top';
+                document.getElementById('ad-link').value = data.link || '';
+                document.getElementById('ad-code').value = data.code || '';
+                document.getElementById('ad-active').checked = data.active || false;
+            }
+        }
+
+        // Save Tool
+        async function saveTool(e) {
             e.preventDefault();
             const data = {
-                siteName: document.getElementById('setting-siteName').value,
-                primaryColor: document.getElementById('setting-primaryColor').value,
-                adBlockerEnabled: document.getElementById('setting-adBlocker').checked,
-                maintenanceMode: document.getElementById('setting-maintenance').checked,
-                updatedAt: new Date()
+                name: document.getElementById('tool-name').value,
+                description: document.getElementById('tool-desc').value,
+                icon: document.getElementById('tool-icon').value || 'fas fa-tools',
+                iconCategory: document.getElementById('tool-icon-category').value,
+                category: document.getElementById('tool-category').value,
+                time: document.getElementById('tool-time').value || 'Instant',
+                popular: document.getElementById('tool-popular').checked,
+                active: document.getElementById('tool-active').checked,
+                updatedAt: serverTimestamp()
             };
+            
             try {
-                await window.fbSetDoc(window.fbDoc(window.fbDb, 'settings', 'site'), data, { merge: true });
-                showToast('Settings saved successfully');
-            } catch (err) {
-                showToast(err.message, 'error');
+                if (editingId) {
+                    await updateDoc(doc(db, 'tools', editingId), data);
+                    showToast('Tool updated successfully!', 'success');
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'tools'), data);
+                    showToast('Tool created successfully!', 'success');
+                }
+                closeModal();
+                loadTools();
+                loadStats();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
             }
         }
+
+        // Save Category
+        async function saveCategory(e) {
+            e.preventDefault();
+            const id = document.getElementById('cat-id').value;
+            const data = {
+                name: document.getElementById('cat-name').value,
+                icon: document.getElementById('cat-icon').value || 'fas fa-tag'
+            };
+            
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'categories', editingId), data);
+                    showToast('Category updated successfully!', 'success');
+                } else {
+                    await updateDoc(doc(db, 'categories', id), data);
+                    showToast('Category created successfully!', 'success');
+                }
+                closeModal();
+                loadCategories();
+                loadStats();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Save Ad
+        async function saveAd(e) {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('ad-title').value,
+                position: document.getElementById('ad-position').value,
+                link: document.getElementById('ad-link').value,
+                code: document.getElementById('ad-code').value,
+                active: document.getElementById('ad-active').checked,
+                updatedAt: serverTimestamp()
+            };
+            
+            try {
+                if (editingId) {
+                    await updateDoc(doc(db, 'ads', editingId), data);
+                    showToast('Ad updated successfully!', 'success');
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'ads'), data);
+                    showToast('Ad created successfully!', 'success');
+                }
+                closeModal();
+                loadAds();
+                loadStats();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Edit Functions
+        window.editTool = (id) => openModal('tool', id);
+        window.editCategory = (id) => openModal('category', id);
+        window.editAd = (id) => openModal('ad', id);
+
+        // Delete Item
+        window.deleteItem = async (collectionName, id) => {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            
+            try {
+                await deleteDoc(doc(db, collectionName, id));
+                showToast('Deleted successfully!', 'success');
+                
+                if (collectionName === 'tools') loadTools();
+                if (collectionName === 'categories') loadCategories();
+                if (collectionName === 'ads') loadAds();
+                loadStats();
+            } catch (error) {
+                showToast('Error deleting: ' + error.message, 'error');
+            }
+        };
+
+        // Search Tools
+        window.searchTools = () => {
+            const query = document.getElementById('tool-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#tools-table-body tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        };
+
+        // Save Settings
+        window.saveSettings = () => {
+            showToast('Settings saved successfully!', 'success');
+        };
+
+        // Toast Notification
+        function showToast(message, type = 'success') {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: type === 'success' ? '#10B981' : '#EF4444',
+                stopOnFocus: true,
+            }).showToast();
+        }
+
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') closeModal();
+        });
     </script>
 </body>
 </html>
