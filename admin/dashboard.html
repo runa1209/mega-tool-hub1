@@ -3,70 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideoHub Admin Panel</title>
+    <title>Advanced Admin | VideoHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans p-4 md:p-10">
+<body class="bg-gray-100 text-gray-800 font-sans p-4 md:p-8">
 
-    <div class="max-w-4xl mx-auto">
-        <header class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm mb-6">
-            <h1 class="text-2xl font-bold">VideoHub Control Panel</h1>
-            <button onclick="logout()" class="text-red-500 font-bold hover:underline">Logout</button>
+    <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-center bg-white p-5 rounded-xl shadow-sm mb-6 border border-gray-200">
+            <h1 class="text-2xl font-black tracking-tight text-gray-900">Admin Control Panel</h1>
+            <button onclick="logout()" class="text-red-600 font-bold hover:bg-red-50 px-4 py-2 rounded-lg transition">Logout</button>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">🎬 Publish New Video</h2>
+            <div class="lg:col-span-5 space-y-6">
                 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Video Title</label>
-                        <input type="text" id="vidTitle" placeholder="e.g. My Awesome Video" class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
-                    </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 relative">
+                    <div id="editModeBadge" class="hidden absolute top-4 right-4 bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-1 rounded">Edit Mode Active</div>
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">🎬 Publish / Edit Video</h2>
                     
-                    <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Thumbnail Image URL</label>
-                        <input type="url" id="vidThumb" placeholder="https://example.com/image.jpg" class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-600 mb-1">Video Embed URL</label>
-                        <input type="url" id="vidEmbed" placeholder="https://www.youtube.com/embed/..." class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
+                    <input type="hidden" id="editVideoId" value="">
+                    
+                    <div class="space-y-3">
                         <div>
-                            <label class="block text-sm font-bold text-gray-600 mb-1">Duration</label>
-                            <input type="text" id="vidDuration" placeholder="10:30" class="w-full p-3 bg-gray-50 border rounded-lg">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Video Title</label>
+                            <input type="text" id="vidTitle" class="w-full p-2.5 bg-gray-50 border rounded-lg text-sm focus:border-blue-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-600 mb-1">Views Text</label>
-                            <input type="text" id="vidViews" placeholder="e.g. 2.5M or 500K" class="w-full p-3 bg-gray-50 border rounded-lg">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Thumbnail URL</label>
+                            <input type="url" id="vidThumb" class="w-full p-2.5 bg-gray-50 border rounded-lg text-sm focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Embed URL (iframe src)</label>
+                            <input type="url" id="vidEmbed" class="w-full p-2.5 bg-gray-50 border rounded-lg text-sm focus:border-blue-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Duration (MM:SS)</label>
+                                <input type="text" id="vidDuration" class="w-full p-2.5 bg-gray-50 border rounded-lg text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Views (e.g. 2M)</label>
+                                <input type="text" id="vidViews" class="w-full p-2.5 bg-gray-50 border rounded-lg text-sm">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="saveVideo()" id="saveBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition">Publish</button>
+                            <button onclick="cancelEdit()" id="cancelBtn" class="hidden bg-gray-200 text-gray-700 font-bold px-4 rounded-lg">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">💰 Ad Placements</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-bold">1. Top Ad (Header)</span>
+                                <input type="checkbox" id="adTopToggle" class="w-4 h-4 cursor-pointer">
+                            </div>
+                            <textarea id="adTopCode" placeholder="AdSense Code..." class="w-full h-16 p-2 text-xs border rounded outline-none"></textarea>
+                        </div>
+
+                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-bold">2. Middle Ad (Inside Grid)</span>
+                                <input type="checkbox" id="adMidToggle" class="w-4 h-4 cursor-pointer">
+                            </div>
+                            <textarea id="adMidCode" placeholder="AdSense Code..." class="w-full h-16 p-2 text-xs border rounded outline-none"></textarea>
+                        </div>
+
+                        <div class="border border-gray-200 p-3 rounded-lg bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-bold">3. Bottom Ad (Footer)</span>
+                                <input type="checkbox" id="adBotToggle" class="w-4 h-4 cursor-pointer">
+                            </div>
+                            <textarea id="adBotCode" placeholder="AdSense Code..." class="w-full h-16 p-2 text-xs border rounded outline-none"></textarea>
                         </div>
                     </div>
 
-                    <button onclick="publishVideo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-lg transition mt-2">
-                        Publish Video
-                    </button>
-                    <p id="publishMsg" class="text-center text-sm font-bold mt-2 text-green-600 hidden">Video Published Successfully!</p>
+                    <button onclick="saveAds()" class="mt-4 w-full bg-gray-800 hover:bg-black text-white font-bold py-2.5 rounded-lg transition">Save Ad Settings</button>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">💰 Ads Manager</h2>
-                
-                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl mb-4 border border-gray-200">
-                    <span class="font-bold">Show Header Ads</span>
-                    <input type="checkbox" id="adToggle" onchange="toggleAds()" class="w-5 h-5 cursor-pointer">
+            <div class="lg:col-span-7">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-full">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2">📁 Published Videos</h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-600">
+                                <tr>
+                                    <th class="p-3 font-bold rounded-tl-lg">Video Title</th>
+                                    <th class="p-3 font-bold">Views</th>
+                                    <th class="p-3 font-bold text-right rounded-tr-lg">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminVideoList" class="divide-y divide-gray-100">
+                                <tr><td colspan="3" class="p-4 text-center text-gray-400">Loading videos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-                <label class="block text-sm font-bold text-gray-600 mb-1">AdSense HTML/Script Code</label>
-                <textarea id="adCodeArea" placeholder="Paste Ad Network Code Here..." class="w-full h-32 p-3 bg-gray-50 border rounded-lg text-xs font-mono"></textarea>
-                
-                <button onclick="saveAdCode()" class="mt-4 w-full bg-gray-800 hover:bg-black text-white font-bold p-3 rounded-lg transition">
-                    Save Ad Settings
-                </button>
             </div>
 
         </div>
@@ -74,7 +114,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, deleteDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -87,10 +127,84 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        let globalVideos = [];
+
         onAuthStateChanged(auth, user => { 
             if(!user) window.location.href="login.html"; 
-            else loadAdsSettings(); 
+            else { loadAdSettings(); fetchManageVideos(); }
         });
+
+        // 1. Fetch Videos for Table
+        async function fetchManageVideos() {
+            const tbody = document.getElementById('adminVideoList');
+            try {
+                const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
+                const snap = await getDocs(q);
+                globalVideos = [];
+                tbody.innerHTML = '';
+                
+                if(snap.empty) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-400">No videos published yet.</td></tr>';
+                    return;
+                }
+
+                snap.forEach(doc => {
+                    const v = doc.data();
+                    v.id = doc.id;
+                    globalVideos.push(v);
+                    
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-3">
+                                <div class="flex items-center gap-3">
+                                    <img src="${v.thumbnail}" class="w-12 h-8 object-cover rounded bg-gray-200">
+                                    <span class="font-medium text-gray-800 line-clamp-1 w-48">${v.title}</span>
+                                </div>
+                            </td>
+                            <td class="p-3 text-gray-500">${v.viewsText}</td>
+                            <td class="p-3 text-right space-x-2">
+                                <button onclick="editVideo('${v.id}')" class="text-blue-600 font-bold hover:underline">Edit</button>
+                                <button onclick="deleteVideo('${v.id}')" class="text-red-600 font-bold hover:underline">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // 2. Edit & Delete Logic
+        window.editVideo = (id) => {
+            const vid = globalVideos.find(v => v.id === id);
+            if(!vid) return;
+            
+            document.getElementById('editVideoId').value = vid.id;
+            document.getElementById('vidTitle').value = vid.title;
+            document.getElementById('vidThumb').value = vid.thumbnail;
+            document.getElementById('vidEmbed').value = vid.embedUrl;
+            document.getElementById('vidDuration').value = vid.duration;
+            document.getElementById('vidViews').value = vid.viewsText;
+            
+            document.getElementById('saveBtn').innerText = "Update Video";
+            document.getElementById('cancelBtn').classList.remove('hidden');
+            document.getElementById('editModeBadge').classList.remove('hidden');
+        };
+
+        window.cancelEdit = () => {
+            document.getElementById('editVideoId').value = "";
+            document.getElementById('vidTitle').value = "";
+            document.getElementById('vidThumb').value = "";
+            document.getElementById('vidEmbed').value = "";
+            document.getElementById('saveBtn').innerText = "Publish";
+            document.getElementById('cancelBtn').classList.add('hidden');
+            document.getElementById('editModeBadge').classList.add('hidden');
+        };
+
+        window.deleteVideo = async (id) => {
+            if(confirm("Are you sure you want to delete this video?")) {
+                await deleteDoc(doc(db, "videos", id));
+                fetchManageVideos();
+            }
+        };
 
         function parseViewsToNumber(viewsText) {
             let num = parseFloat(viewsText);
@@ -100,57 +214,70 @@
             return num;
         }
 
-        window.publishVideo = async () => {
+        window.saveVideo = async () => {
+            const editId = document.getElementById('editVideoId').value;
             const title = document.getElementById('vidTitle').value;
             const thumbnail = document.getElementById('vidThumb').value;
             const embedUrl = document.getElementById('vidEmbed').value;
-            const duration = document.getElementById('vidDuration').value || "12:00";
-            const viewsText = document.getElementById('vidViews').value || "1.2M";
-            const viewsCount = parseViewsToNumber(viewsText);
+            const duration = document.getElementById('vidDuration').value || "10:00";
+            const viewsText = document.getElementById('vidViews').value || "1M";
 
-            if(!title || !thumbnail || !embedUrl) return alert("Title, Thumbnail, and Embed URL are required!");
+            if(!title || !thumbnail) return alert("Title and Thumbnail are required!");
+
+            const data = {
+                title: title,
+                thumbnail: thumbnail,
+                embedUrl: embedUrl,
+                duration: duration,
+                viewsText: viewsText,
+                viewsCount: parseViewsToNumber(viewsText),
+                channelName: "Admin"
+            };
 
             try {
-                await addDoc(collection(db, "videos"), {
-                    title: title,
-                    thumbnail: thumbnail,
-                    embedUrl: embedUrl,
-                    duration: duration,
-                    viewsText: viewsText,
-                    viewsCount: viewsCount, 
-                    channelName: "Admin",
-                    timestamp: serverTimestamp()
-                });
-                
-                // Form Reset
-                document.getElementById('vidTitle').value = '';
-                document.getElementById('vidThumb').value = '';
-                document.getElementById('vidEmbed').value = '';
-                
-                const msg = document.getElementById('publishMsg');
-                msg.classList.remove('hidden');
-                setTimeout(() => msg.classList.add('hidden'), 3000);
-            } catch(e) {
-                console.error(e);
-                alert("Error publishing video!");
-            }
+                if(editId) {
+                    await updateDoc(doc(db, "videos", editId), data);
+                    alert("Video Updated!");
+                } else {
+                    data.timestamp = serverTimestamp();
+                    await addDoc(collection(db, "videos"), data);
+                    alert("New Video Published!");
+                }
+                cancelEdit();
+                fetchManageVideos();
+            } catch(e) { console.error(e); }
         };
 
-        async function loadAdsSettings() {
-            const snap = await getDoc(doc(db, "settings", "tools"));
+        // 3. Ad Settings Manager
+        async function loadAdSettings() {
+            const snap = await getDoc(doc(db, "settings", "ads"));
             if(snap.exists()) {
-                document.getElementById('adToggle').checked = snap.data().showAds;
-                document.getElementById('adCodeArea').value = snap.data().adCode || "";
+                const d = snap.data();
+                document.getElementById('adTopToggle').checked = d.adTopShow || false;
+                document.getElementById('adTopCode').value = d.adTopCode || "";
+                
+                document.getElementById('adMidToggle').checked = d.adMidShow || false;
+                document.getElementById('adMidCode').value = d.adMidCode || "";
+                
+                document.getElementById('adBotToggle').checked = d.adBotShow || false;
+                document.getElementById('adBotCode').value = d.adBotCode || "";
             }
         }
 
-        window.toggleAds = async () => {
-            await updateDoc(doc(db, "settings", "tools"), { showAds: document.getElementById('adToggle').checked });
-        };
-
-        window.saveAdCode = async () => {
-            await updateDoc(doc(db, "settings", "tools"), { adCode: document.getElementById('adCodeArea').value });
-            alert("Ads updated on live site!");
+        window.saveAds = async () => {
+            const data = {
+                adTopShow: document.getElementById('adTopToggle').checked,
+                adTopCode: document.getElementById('adTopCode').value,
+                adMidShow: document.getElementById('adMidToggle').checked,
+                adMidCode: document.getElementById('adMidCode').value,
+                adBotShow: document.getElementById('adBotToggle').checked,
+                adBotCode: document.getElementById('adBotCode').value,
+            };
+            await updateDoc(doc(db, "settings", "ads"), data).catch(async () => {
+                // Create document if doesn't exist
+                await getFirestore(app).collection("settings").doc("ads").set(data);
+            });
+            alert("All Ad Placements Saved!");
         };
 
         window.logout = () => signOut(auth).then(() => { window.location.href = "login.html"; });
