@@ -1,206 +1,85 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>SmartHub | Premium Web Utilities & Developer Tools</title>
-    <meta name="description" content="Access blazing-fast developer utilities, network checkers, URL shorteners, and converters directly from your browser. 100% Free.">
-    <meta name="keywords" content="IP checker, URL shortener, web tools, developer utilities, online tools">
-    <meta name="author" content="SmartHub">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    
+    <title>VideoHub | Trending Videos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        
-        /* Glassmorphism & Advanced UI */
-        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-        .glass-hero { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
-        /* Smooth Card Hover Effects */
-        .tool-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(0); }
-        .tool-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1); border-color: #3b82f6; }
-        
-        /* Entrance Animations */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-up { animation: fadeUp 0.6s ease-out forwards; opacity: 0; }
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        
-        .hidden { display: none !important; }
+        body { font-family: 'Roboto', sans-serif; background-color: #f3f4f6; }
+        .title-font { font-family: 'Lobster', cursive; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .ad-slot { background: repeating-linear-gradient(45deg, #f9fafb, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px); }
     </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900 flex flex-col min-h-screen">
+<body class="max-w-md mx-auto bg-white shadow-xl min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <nav class="glass-nav border-b border-slate-200/60 sticky top-0 z-50 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">S</div>
-                    <span class="font-extrabold text-2xl tracking-tight text-slate-900">SmartHub</span>
-                </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" class="text-slate-600 hover:text-blue-600 font-semibold transition">Home</a>
-                    <a href="#tools" class="text-slate-600 hover:text-blue-600 font-semibold transition">Tools</a>
-                    <a href="pages/about.html" class="text-slate-600 hover:text-blue-600 font-semibold transition">About</a>
-                    <a href="pages/contact.html" class="text-slate-600 hover:text-blue-600 font-semibold transition">Contact</a>
-                </div>
-
-                <div class="flex items-center md:hidden">
-                    <button id="mobile-menu-btn" class="p-2 text-slate-600 hover:text-blue-600 focus:outline-none transition bg-slate-100 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    </button>
-                </div>
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">V</div>
+                <span class="font-bold tracking-tight">Menu</span>
             </div>
+            <button onclick="toggleMenu()" class="text-gray-600 font-bold text-2xl leading-none">&times;</button>
         </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 bg-red-50 text-red-600 rounded-lg font-bold"><span class="text-lg">🏠</span> Home</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">🔥</span> Trending</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">📁</span> Categories</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">⭐</span> Premium</a>
+            <hr class="my-2 border-gray-200">
+            <a href="pages/contact.html" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">✉️</span> Contact</a>
+            <a href="pages/privacy-policy.html" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">🛡️</span> Privacy Policy</a>
+        </nav>
+    </div>
+    <div id="menuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-2xl">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="#" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">Home</a>
-                <a href="#tools" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">Tools</a>
-                <a href="pages/about.html" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">About</a>
-                <a href="pages/contact.html" class="block px-4 py-3 rounded-xl font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition">Contact</a>
-            </div>
+    <header class="flex justify-between items-center px-3 py-2 bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold">V</div>
+            <span class="text-xl font-bold tracking-tight text-gray-900">VIDEO<span class="text-red-600">HUB</span></span>
         </div>
-    </nav>
+        <div class="flex items-center gap-4 text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <button onclick="toggleMenu()" class="focus:outline-none">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+    </header>
 
-    <div id="top-ad" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 hidden animate-fade-up">
-        <div class="border-2 border-dashed border-slate-200 rounded-3xl py-10 text-center flex flex-col items-center justify-center bg-white shadow-sm">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Advertisement</span>
-            <div id="ad-content-top" class="w-full overflow-hidden"></div>
+    <div id="top-ad" class="hidden border-b border-gray-200">
+        <div class="ad-slot py-4 text-center flex flex-col items-center justify-center min-h-[90px]">
+            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Advertisement</span>
+            <div id="ad-content-top" class="w-full text-xs text-gray-500 overflow-hidden px-2"></div>
         </div>
     </div>
 
-    <div class="relative bg-slate-900 text-white mt-8 mx-4 sm:mx-6 lg:mx-8 rounded-[2.5rem] overflow-hidden shadow-2xl animate-fade-up">
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
-        <div class="absolute -top-32 -right-32 w-[30rem] h-[30rem] bg-blue-500/20 rounded-full blur-[100px]"></div>
-        <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] bg-indigo-500/20 rounded-full blur-[100px]"></div>
-        
-        <div class="relative z-10 px-6 py-28 md:py-36 text-center max-w-5xl mx-auto">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-hero mb-8 text-sm font-semibold text-blue-200 shadow-xl border border-white/10 hover:bg-white/10 transition cursor-default">
-                <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span></span>
-                Platform is Online & Fast
-            </div>
-            
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-8 leading-[1.05]">
-                Smart Tools for <br> 
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">Modern Creators</span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-slate-300 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
-                Boost your productivity with our suite of blazing-fast developer utilities, network checkers, and link management tools.
-            </p>
-            
-            <div class="max-w-2xl mx-auto relative group">
-                <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                    <svg class="h-6 w-6 text-slate-400 group-focus-within:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </div>
-                <input type="text" id="searchInput" placeholder="Search for tools (e.g., Shortener)..." class="block w-full pl-16 pr-24 py-5 border border-white/10 rounded-2xl leading-5 bg-white/5 text-white placeholder-slate-400 focus:outline-none focus:bg-white/10 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 transition-all text-lg backdrop-blur-md shadow-2xl">
-                <div class="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none">
-                    <span class="text-xs font-bold text-slate-400 bg-white/10 px-2 py-1 rounded-md border border-white/10">Ctrl + K</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <main id="tools" class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-24">
-        
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 animate-fade-up">
-            <div>
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Application Hub</h2>
-                <p class="text-slate-500 mt-3 text-lg font-medium">Select a utility below to get started instantly.</p>
-            </div>
-            <div class="hidden md:flex items-center gap-2 text-sm font-bold text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                Cloud Synced
-            </div>
+    <main class="p-3 flex-grow">
+        <div class="flex justify-between items-center mb-3 mt-1">
+            <h1 class="text-[22px] font-normal title-font text-gray-800 tracking-wide">Trending Free Videos</h1>
         </div>
 
-        <div id="toolsGrid" class="grid gap-8 transition-all duration-500">
-            
-            <a href="tools/ip-checker.html" id="ip-card" class="tool-card group bg-white p-8 rounded-3xl border border-slate-200 relative overflow-hidden animate-fade-up delay-100">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10 transition-transform group-hover:scale-125"></div>
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">🌐</div>
-                <h3 class="text-2xl font-bold text-slate-900 mb-3 tool-title">IP Address Checker</h3>
-                <p class="text-slate-500 leading-relaxed mb-8 font-medium text-sm">Instantly analyze your network's public IP, Internet Service Provider, and exact geographical location.</p>
-                <div class="inline-flex items-center font-bold text-blue-600 group-hover:translate-x-2 transition-transform">
-                    Open Tool <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                </div>
-            </a>
-
-            <a href="tools/url-shortener.html" id="url-card" class="tool-card group bg-white p-8 rounded-3xl border border-slate-200 relative overflow-hidden animate-fade-up delay-200">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 transition-transform group-hover:scale-125"></div>
-                <div class="absolute top-6 right-6 bg-indigo-100 text-indigo-700 text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span> Active
-                </div>
-                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">🔗</div>
-                <h3 class="text-2xl font-bold text-slate-900 mb-3 tool-title">Smart URL Shortener</h3>
-                <p class="text-slate-500 leading-relaxed mb-8 font-medium text-sm">Convert long, messy links into short, trackable, and highly professional URLs in milliseconds.</p>
-                <div class="inline-flex items-center font-bold text-indigo-600 group-hover:translate-x-2 transition-transform">
-                    Open Tool <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                </div>
-            </a>
-
+        <div class="flex gap-2 mb-4 text-sm overflow-x-auto no-scrollbar pb-1">
+            <button id="btn-best" onclick="sortVideos('best')" class="filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors">
+                👍 Best Videos
+            </button>
+            <button id="btn-new" onclick="sortVideos('new')" class="filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors">
+                ⚡ Newest videos
+            </button>
         </div>
 
-        <div id="no-results" class="hidden text-center py-20 bg-white rounded-3xl mt-8 border border-slate-200 shadow-sm animate-fade-up">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full text-slate-400 mb-6 text-4xl border border-slate-100">🔍</div>
-            <h3 class="text-2xl font-black text-slate-800 tracking-tight">No tools found</h3>
-            <p class="text-slate-500 mt-2 text-md font-medium">Try searching with a different keyword.</p>
+        <div id="videoGrid" class="grid grid-cols-2 gap-x-2 gap-y-5">
+            <div class="col-span-2 text-center py-10 text-gray-400 text-sm" id="loadingText">
+                Loading videos from database...
+            </div>
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
-                <div class="md:col-span-5">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl text-white flex items-center justify-center font-bold text-xl shadow-md">S</div>
-                        <span class="font-black text-2xl text-slate-900 tracking-tight">SmartHub</span>
-                    </div>
-                    <p class="text-slate-500 text-sm leading-relaxed max-w-sm font-medium">
-                        The ultimate cloud-powered utility platform designed for speed, privacy, and seamless user experience. Build better, faster.
-                    </p>
-                </div>
-                
-                <div class="md:col-span-3 md:col-start-7">
-                    <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-widest">Legal Information</h4>
-                    <ul class="space-y-3 text-sm font-medium text-slate-500">
-                        <li><a href="pages/privacy-policy.html" class="hover:text-blue-600 transition">Privacy Policy</a></li>
-                        <li><a href="pages/terms.html" class="hover:text-blue-600 transition">Terms of Service</a></li>
-                        <li><a href="pages/disclaimer.html" class="hover:text-blue-600 transition">Disclaimer</a></li>
-                    </ul>
-                </div>
-                
-                <div class="md:col-span-3">
-                    <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-widest">Company</h4>
-                    <ul class="space-y-3 text-sm font-medium text-slate-500">
-                        <li><a href="pages/about.html" class="hover:text-blue-600 transition">About Us</a></li>
-                        <li><a href="pages/contact.html" class="hover:text-blue-600 transition">Contact Support</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-sm font-medium">
-                <p>&copy; 2026 SmartHub Web Services. All rights reserved.</p>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    Systems Operational
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
@@ -211,80 +90,95 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 1. Fetch & Apply Firebase Admin Settings
-        async function fetchSettings() {
-            try {
-                const docSnap = await getDoc(doc(db, "settings", "tools"));
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    
-                    // Layout Engine
-                    const grid = document.getElementById('toolsGrid');
-                    grid.classList.add(`md:grid-cols-2`, `lg:grid-cols-${data.gridCols || 3}`);
-                    
-                    // IP Checker Visibility Logic
-                    if(data['ip-checker'] === false) document.getElementById('ip-card').classList.add('hidden');
-                    else document.getElementById('ip-card').classList.remove('hidden');
+        // Sidebar Toggle Logic
+        window.toggleMenu = () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('menuOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        };
 
-                    // URL Shortener Visibility Logic
-                    if(data['url-shortener'] === false) document.getElementById('url-card').classList.add('hidden');
-                    else document.getElementById('url-card').classList.remove('hidden');
-                    
-                    // AdSense Engine
-                    if(data.showAds) {
-                        document.getElementById('top-ad').classList.remove('hidden');
-                        document.getElementById('ad-content-top').innerHTML = data.adCode || "AdSense Script Active";
-                    }
+        let allVideos = []; // Store fetched videos here for sorting
+
+        // Fetch Ads
+        async function loadAds() {
+            try {
+                const snap = await getDoc(doc(db, "settings", "tools"));
+                if (snap.exists() && snap.data().showAds) {
+                    document.getElementById('top-ad').classList.remove('hidden');
+                    document.getElementById('ad-content-top').innerHTML = snap.data().adCode || "Ad Slot Active";
                 }
-            } catch(e) { 
-                console.error("Database sync issue:", e);
-                // Fail-safe: Show default tools if DB fails
-                document.getElementById('ip-card').classList.remove('hidden');
-                document.getElementById('url-card').classList.remove('hidden');
+            } catch(e) { console.error(e); }
+        }
+
+        // Fetch Videos
+        async function fetchVideos() {
+            try {
+                const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                allVideos = [];
+                querySnapshot.forEach((doc) => allVideos.push(doc.data()));
+                
+                sortVideos('new'); // Initial load: Newest first
+            } catch (error) {
+                document.getElementById('videoGrid').innerHTML = '<div class="col-span-2 text-center py-10 text-red-400 text-sm">Error loading database.</div>';
             }
         }
-        fetchSettings();
 
-        // 2. High-Performance Search Engine
-        const searchInput = document.getElementById('searchInput');
-        const toolsGrid = document.getElementById('toolsGrid');
-        const cards = toolsGrid.getElementsByClassName('tool-card');
-        const noResults = document.getElementById('no-results');
-
-        // Ctrl+K Shortcut for Search
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                searchInput.focus();
+        // Sort and Render Logic
+        window.sortVideos = (type) => {
+            // Update button styles
+            const btnBest = document.getElementById('btn-best');
+            const btnNew = document.getElementById('btn-new');
+            
+            if (type === 'new') {
+                btnNew.className = "filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
+                btnBest.className = "filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
+                
+                allVideos.sort((a, b) => b.timestamp - a.timestamp); // Sort by time
+            } else {
+                btnBest.className = "filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
+                btnNew.className = "filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
+                
+                allVideos.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0)); // Sort by views
             }
-        });
 
-        searchInput.addEventListener('input', function() {
-            let filter = searchInput.value.toLowerCase().trim();
-            let visibleCount = 0;
+            renderGrid();
+        };
 
-            Array.from(cards).forEach(card => {
-                // If a card is hidden by Admin Panel, keep it hidden during search
-                if(card.classList.contains('hidden') && filter === '') return;
+        function renderGrid() {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = '';
+            
+            if (allVideos.length === 0) {
+                grid.innerHTML = '<div class="col-span-2 text-center py-10 text-gray-400 text-sm">No videos found. Publish from Admin Panel.</div>';
+                return;
+            }
 
-                let title = card.querySelector('.tool-title').innerText.toLowerCase();
-                if (title.includes(filter)) {
-                    card.style.display = "";
-                    visibleCount++;
-                } else {
-                    card.style.display = "none";
-                }
+            allVideos.forEach(v => {
+                grid.innerHTML += `
+                    <div class="cursor-pointer">
+                        <div class="relative w-full aspect-[4/3] bg-gray-200 rounded-[4px] overflow-hidden">
+                            <img src="${v.thumbnail}" alt="Thumbnail" class="w-full h-full object-cover">
+                            <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[11px] font-bold px-1 rounded-sm">${v.duration || '00:00'}</span>
+                        </div>
+                        <div class="flex justify-between items-start mt-1.5">
+                            <h3 class="text-[13px] font-bold text-gray-900 leading-tight title-font truncate pr-1">${v.title}</h3>
+                        </div>
+                        <div class="flex items-center gap-1 mt-1 text-[11px] text-gray-500">
+                            <img src="https://ui-avatars.com/api/?name=${v.channelName || 'CPA'}&background=random" class="w-3.5 h-3.5 rounded-full">
+                            <span class="truncate max-w-[60px]">${v.channelName || 'Admin'}</span>
+                            <span class="text-[10px] text-gray-400">|</span>
+                            <span>${v.viewsText || '0'} views</span>
+                        </div>
+                    </div>
+                `;
             });
+        }
 
-            noResults.classList.toggle('hidden', visibleCount > 0);
-        });
-
-        // 3. Smooth Mobile Menu
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        loadAds();
+        fetchVideos();
     </script>
 </body>
 </html>
