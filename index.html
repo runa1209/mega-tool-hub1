@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f3f4f6; }
+        body { font-family: 'Roboto', sans-serif; background-color: #f3f4f6; padding-bottom: 60px; /* Space for sticky ad */ }
         .title-font { font-family: 'Lobster', cursive; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .ad-slot { background: repeating-linear-gradient(45deg, #f9fafb, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px); }
@@ -16,40 +16,47 @@
 <body class="max-w-md mx-auto bg-white shadow-xl min-h-screen flex flex-col relative overflow-x-hidden">
 
     <header class="flex justify-between items-center px-3 py-2 bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0); filterCategory('All')">
             <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold">V</div>
             <span class="text-xl font-bold tracking-tight text-gray-900">VIDEO<span class="text-red-600">HUB</span></span>
         </div>
         <div class="flex items-center gap-4 text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <button class="focus:outline-none">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </div>
     </header>
 
+    <nav class="bg-gray-800 px-3 py-2 flex gap-3 overflow-x-auto no-scrollbar whitespace-nowrap" id="categoryNav">
+        </nav>
+
     <div id="ad-top-container" class="hidden border-b border-gray-200">
-        <div class="ad-slot py-3 text-center flex flex-col items-center min-h-[90px] px-2" id="ad-top-content"></div>
+        <div class="ad-slot py-2 text-center flex flex-col items-center min-h-[60px] px-2" id="ad-top-content"></div>
     </div>
 
     <main class="p-3 flex-grow pb-8">
+        
         <div class="flex justify-between items-center mb-3 mt-1">
-            <h1 class="text-[22px] font-normal title-font text-gray-800 tracking-wide">Trending Free Videos</h1>
+            <h1 id="pageTitle" class="text-[22px] font-normal title-font text-gray-800 tracking-wide">All Videos</h1>
         </div>
 
         <div class="flex gap-2 mb-4 text-sm overflow-x-auto no-scrollbar pb-1">
-            <button id="btn-best" onclick="sortVideos('best')" class="filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm transition-colors">👍 Best</button>
-            <button id="btn-new" onclick="sortVideos('new')" class="filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm transition-colors">⚡ Newest</button>
+            <button id="btn-best" onclick="sortVideos('best')" class="px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm">👍 Best</button>
+            <button id="btn-new" onclick="sortVideos('new')" class="px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm">⚡ Newest</button>
         </div>
 
         <div id="videoGrid" class="grid grid-cols-2 gap-x-2 gap-y-5">
-            <div class="col-span-2 text-center py-10 text-gray-400 text-sm">Loading videos...</div>
+            <div class="col-span-2 text-center py-10 text-gray-400 text-sm">Loading...</div>
         </div>
 
         <div id="ad-bot-container" class="hidden mt-8 border-t border-gray-200 pt-4">
-            <div class="ad-slot py-3 text-center flex flex-col items-center min-h-[90px] px-2" id="ad-bot-content"></div>
+            <div class="ad-slot py-2 text-center flex flex-col items-center min-h-[90px]" id="ad-bot-content"></div>
         </div>
     </main>
+
+    <div id="ad-sticky-container" class="hidden fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-300 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 p-1 flex justify-center">
+        <button onclick="document.getElementById('ad-sticky-container').style.display='none'" class="absolute -top-6 right-2 bg-gray-800 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">X</button>
+        <div id="ad-sticky-content" class="w-full text-center text-xs min-h-[50px] flex items-center justify-center text-gray-400"></div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -65,60 +72,63 @@
         const db = getFirestore(app);
 
         let allVideos = [];
-        let adData = {}; // Store ad settings globally
+        let filteredVideos = [];
+        let adData = {}; 
+        let currentSort = 'new';
 
-        // Load Ads Settings
         async function fetchAdSettings() {
-            try {
-                const snap = await getDoc(doc(db, "settings", "ads"));
-                if(snap.exists()) {
-                    adData = snap.data();
-                    
-                    // Render Top Ad
-                    if(adData.adTopShow) {
-                        document.getElementById('ad-top-container').classList.remove('hidden');
-                        document.getElementById('ad-top-content').innerHTML = adData.adTopCode || "Top Ad Space";
-                    }
-                    
-                    // Render Bottom Ad
-                    if(adData.adBotShow) {
-                        document.getElementById('ad-bot-container').classList.remove('hidden');
-                        document.getElementById('ad-bot-content').innerHTML = adData.adBotCode || "Bottom Ad Space";
-                    }
-                }
-            } catch(e) { console.error("Ad Load Error", e); }
-        }
-
-        // Fetch Videos
-        async function fetchVideos() {
-            try {
-                const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                allVideos = [];
-                querySnapshot.forEach(doc => {
-                    let data = doc.data();
-                    data.id = doc.id; 
-                    allVideos.push(data);
-                });
-                sortVideos('new'); 
-            } catch (error) {
-                console.error(error);
+            const snap = await getDoc(doc(db, "settings", "ads"));
+            if(snap.exists()) {
+                adData = snap.data();
+                if(adData.ad1Show) { document.getElementById('ad-top-container').classList.remove('hidden'); document.getElementById('ad-top-content').innerHTML = adData.ad1Code; }
+                if(adData.ad4Show) { document.getElementById('ad-bot-container').classList.remove('hidden'); document.getElementById('ad-bot-content').innerHTML = adData.ad4Code; }
+                if(adData.ad5Show) { document.getElementById('ad-sticky-container').classList.remove('hidden'); document.getElementById('ad-sticky-content').innerHTML = adData.ad5Code; }
             }
         }
 
+        async function fetchVideos() {
+            const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+            let categories = new Set();
+            allVideos = [];
+            
+            snap.forEach(doc => {
+                let v = doc.data(); v.id = doc.id; allVideos.push(v);
+                if(v.category) categories.add(v.category.toUpperCase());
+            });
+
+            renderCategoryMenu(Array.from(categories));
+            window.filterCategory('All'); 
+        }
+
+        function renderCategoryMenu(cats) {
+            const nav = document.getElementById('categoryNav');
+            let html = `<button onclick="filterCategory('All')" class="text-white text-xs font-bold px-2 py-1 bg-red-600 rounded">ALL</button>`;
+            cats.forEach(c => {
+                html += `<button onclick="filterCategory('${c}')" class="text-gray-300 hover:text-white text-xs font-bold px-2 py-1">${c}</button>`;
+            });
+            nav.innerHTML = html;
+        }
+
+        window.filterCategory = (cat) => {
+            document.getElementById('pageTitle').innerText = cat === 'All' ? 'Trending Free Videos' : cat + ' Videos';
+            filteredVideos = cat === 'All' ? [...allVideos] : allVideos.filter(v => (v.category || '').toUpperCase() === cat);
+            sortVideos(currentSort);
+        };
+
         window.sortVideos = (type) => {
+            currentSort = type;
             const btnBest = document.getElementById('btn-best');
             const btnNew = document.getElementById('btn-new');
             
             if (type === 'new') {
                 btnNew.className = "px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm transition-colors";
                 btnBest.className = "px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm transition-colors";
-                allVideos.sort((a, b) => b.timestamp - a.timestamp);
+                filteredVideos.sort((a, b) => b.timestamp - a.timestamp);
             } else {
                 btnBest.className = "px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm transition-colors";
                 btnNew.className = "px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm transition-colors";
-                allVideos.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0)); 
+                filteredVideos.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0)); 
             }
             renderGrid();
         };
@@ -126,40 +136,37 @@
         function renderGrid() {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
-            
-            let counter = 0; // To track video position
+            let counter = 0;
 
-            allVideos.forEach(v => {
+            if(filteredVideos.length === 0) { grid.innerHTML = '<div class="col-span-2 text-center text-gray-400 py-6">No videos in this category.</div>'; return; }
+
+            filteredVideos.forEach(v => {
                 counter++;
-
-                const cardHTML = `
+                grid.innerHTML += `
                     <div class="cursor-pointer group" onclick="window.location.href='watch.html?v=${v.id}'">
                         <div class="relative w-full aspect-[4/3] bg-gray-200 rounded-[4px] overflow-hidden">
                             <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
                             <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[11px] font-bold px-1 rounded-sm">${v.duration || '00:00'}</span>
                         </div>
                         <h3 class="text-[13px] font-bold text-gray-900 leading-tight title-font truncate pr-1 mt-1.5">${v.title}</h3>
-                        <div class="flex items-center gap-1 mt-1 text-[11px] text-gray-500">
-                            <span>Admin</span><span class="text-[10px] text-gray-400">|</span><span>${v.viewsText || '0'} views</span>
+                        <div class="flex items-center justify-between mt-1 text-[11px] text-gray-500">
+                            <span>${v.viewsText || '0'} views</span>
+                            <span class="text-[9px] bg-gray-200 text-gray-600 px-1 rounded">${v.category || 'NEW'}</span>
                         </div>
                     </div>
                 `;
                 
-                grid.innerHTML += cardHTML;
-
-                // 2. MIDDLE AD SLOT (Injects an ad after every 4th video)
-                if (counter % 4 === 0 && adData.adMidShow) {
-                    const middleAdHTML = `
-                        <div class="col-span-2 ad-slot py-3 mt-2 text-center flex items-center justify-center min-h-[70px] border border-gray-200 rounded text-xs text-gray-500 overflow-hidden">
-                            ${adData.adMidCode || "Middle Ad Space"}
-                        </div>
-                    `;
-                    grid.innerHTML += middleAdHTML;
+                // INJECT AD 2 (After 2nd Video)
+                if (counter === 2 && adData.ad2Show) {
+                    grid.innerHTML += `<div class="col-span-2 ad-slot py-2 mt-2 text-center flex items-center justify-center min-h-[60px] border border-gray-200 rounded text-xs text-gray-500">${adData.ad2Code}</div>`;
+                }
+                // INJECT AD 3 (After 6th Video)
+                if (counter === 6 && adData.ad3Show) {
+                    grid.innerHTML += `<div class="col-span-2 ad-slot py-2 mt-2 text-center flex items-center justify-center min-h-[60px] border border-gray-200 rounded text-xs text-gray-500">${adData.ad3Code}</div>`;
                 }
             });
         }
 
-        // Initialize
         fetchAdSettings().then(fetchVideos);
     </script>
 </body>
