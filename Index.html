@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্মার্ট ইউটিলিটি হাব | All-in-One Tools</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-12 text-center shadow-lg">
+        <h1 class="text-4xl font-extrabold tracking-tight">স্মার্ট ইউটিলিটি হাব</h1>
+        <p class="text-md mt-3 opacity-90 max-w-md mx-auto">আপনার প্রয়োজনীয় সব অনলাইন টুল এখন এক জায়গায়। নিরাপদ এবং সুপারফাস্ট!</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">🌐</div>
+                <h2 class="text-xl font-bold mt-4">মাই আইপি চেকার</h2>
+                <p class="text-slate-500 text-sm mt-2">আপনার বর্তমান আইপি অ্যাড্রেস এবং লোকেশন এক ক্লিকে দেখে নিন।</p>
+                <a href="tools/ip-checker.html" class="inline-block mt-5 text-blue-600 font-semibold hover:text-blue-700">টুলটি ব্যবহার করুন &rarr;</a>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 opacity-60 relative">
+                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-2xl">🔗</div>
+                <h2 class="text-xl font-bold mt-4">স্মার্ট লিঙ্ক শর্টনার</h2>
+                <p class="text-slate-500 text-sm mt-2">যেকোনো বড় লিঙ্কে ছোট এবং প্রফেশনাল করে তুলুন।</p>
+                <span class="absolute top-4 right-4 text-xs font-medium bg-slate-200 text-slate-600 px-2 py-1 rounded-md">শীঘ্রই আসছে</span>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 opacity-60 relative">
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">📊</div>
+                <h2 class="text-xl font-bold mt-4">কিউআর কোড মেকার</h2>
+                <p class="text-slate-500 text-sm mt-2">আপনার ওয়েবসাইট বা টেক্সটের জন্য কাস্টম কিউআর কোড বানান।</p>
+                <span class="absolute top-4 right-4 text-xs font-medium bg-slate-200 text-slate-600 px-2 py-1 rounded-md">শীঘ্রই আসছে</span>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="text-center py-8 text-slate-400 text-sm mt-24 border-t border-slate-200">
+        &copy; 2026 স্মার্ট ইউটিলিটি হাব। ফায়ারবেস কানেক্টেড।
+    </footer>
+
+    <script type="module">
+        // Firebase CDN লিঙ্ক ব্যবহার করা হচ্ছে (সরাসরি HTML এর জন্য)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        
+        // আপনার দেওয়া আসল কনফিগ
+        const firebaseConfig = {
+            apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
+            authDomain: "mega-tool-hub.firebaseapp.com",
+            projectId: "mega-tool-hub",
+            storageBucket: "mega-tool-hub.firebasestorage.app",
+            messagingSenderId: "312297953340",
+            appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
+        };
+
+        // Firebase ইনিশিয়ালাইজ করা
+        try {
+            const app = initializeApp(firebaseConfig);
+            console.log("Firebase Connected Successfully!");
+        } catch (error) {
+            console.error("Firebase connection failed:", error);
+        }
+    </script>
+</body>
+</html>
