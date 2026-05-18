@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Video | VideoHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f3f4f6; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="max-w-md mx-auto bg-white shadow-xl min-h-screen flex flex-col">
+
+    <header class="flex justify-between items-center px-3 py-2 bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center font-bold">V</div>
+            <span class="text-xl font-bold tracking-tight text-gray-900">VIDEO<span class="text-red-600">HUB</span></span>
+        </div>
+        <a href="index.html" class="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">← Back</a>
+    </header>
+
+    <div id="playerContainer" class="w-full aspect-video bg-black sticky top-[49px] z-40 relative">
+        <div id="playerLoader" class="w-full h-full flex items-center justify-center text-white absolute inset-0">
+            <svg class="animate-spin h-8 w-8 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        </div>
+        <iframe id="videoIframe" class="w-full h-full hidden relative z-10" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <main class="p-3 flex-grow">
+        
+        <h1 id="videoTitle" class="text-[17px] font-bold text-gray-900 leading-tight mb-2">Loading Video Details...</h1>
+        <div class="flex items-center justify-between text-xs text-gray-500 mb-4 border-b border-gray-200 pb-3">
+            <span id="videoViews" class="font-medium">-- views</span>
+            <div class="flex gap-4">
+                <button class="flex items-center gap-1 font-bold text-gray-700"><span class="text-lg">👍</span> Like</button>
+                <button class="flex items-center gap-1 font-bold text-gray-700"><span class="text-lg">🔗</span> Share</button>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+                <img id="channelThumb" src="https://ui-avatars.com/api/?name=Admin" class="w-10 h-10 rounded-full bg-gray-200">
+                <div>
+                    <p id="channelName" class="font-bold text-gray-900 text-sm">Channel Name</p>
+                    <p class="text-xs text-gray-500 font-medium">1.2M Subscribers</p>
+                </div>
+            </div>
+            <button class="bg-red-600 text-white px-4 py-1.5 rounded-full font-bold text-sm shadow-md">Subscribe</button>
+        </div>
+
+        <div class="w-full h-[90px] bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 mb-5">
+            <span class="text-[10px] font-bold uppercase tracking-widest mb-1">Banner Ad Slot</span>
+            <span class="text-xs">Place CPA or AdSense here</span>
+        </div>
+
+        <h3 class="font-bold text-gray-900 mb-3 text-sm">Up Next</h3>
+        <div id="relatedVideos" class="flex flex-col gap-3 pb-8">
+            <div class="text-center text-sm text-gray-400 py-4">Loading related videos...</div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, query, limit, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
+            authDomain: "mega-tool-hub.firebaseapp.com",
+            projectId: "mega-tool-hub",
+            appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Get Video ID from URL (e.g. watch.html?v=123xyz)
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('v');
+
+        async function loadVideo() {
+            if(!videoId) {
+                document.getElementById('videoTitle').innerText = "Video Not Found";
+                document.getElementById('playerLoader').innerHTML = "<span class='text-sm'>Invalid Video Link</span>";
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "videos", videoId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const v = docSnap.data();
+                    
+                    // Set Data
+                    document.getElementById('videoTitle').innerText = v.title;
+                    document.getElementById('videoViews').innerText = (v.viewsText || "0") + " views";
+                    document.getElementById('channelName').innerText = v.channelName || "Admin";
+                    document.getElementById('channelThumb').src = `https://ui-avatars.com/api/?name=${v.channelName || 'V'}&background=random`;
+
+                    // Load Video in Iframe
+                    const iframe = document.getElementById('videoIframe');
+                    // If you haven't added an embedUrl in admin panel yet, it plays a demo YouTube video
+                    iframe.src = v.embedUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ"; 
+                    iframe.classList.remove('hidden');
+                    document.getElementById('playerLoader').classList.add('hidden');
+
+                    loadRelatedVideos();
+                } else {
+                    document.getElementById('videoTitle').innerText = "Video has been removed.";
+                    document.getElementById('playerLoader').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        // Load 5 random/newest videos for "Up Next"
+        async function loadRelatedVideos() {
+            const container = document.getElementById('relatedVideos');
+            try {
+                const q = query(collection(db, "videos"), orderBy("timestamp", "desc"), limit(6));
+                const snap = await getDocs(q);
+                container.innerHTML = '';
+                
+                snap.forEach(doc => {
+                    if(doc.id !== videoId) {
+                        const v = doc.data();
+                        container.innerHTML += `
+                            <div class="flex gap-2 cursor-pointer group" onclick="window.location.href='watch.html?v=${doc.id}'">
+                                <div class="relative w-40 aspect-[4/3] bg-gray-200 rounded-[4px] overflow-hidden flex-shrink-0">
+                                    <img src="${v.thumbnail}" class="w-full h-full object-cover">
+                                    <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[10px] font-bold px-1 rounded-sm">${v.duration || '00:00'}</span>
+                                </div>
+                                <div class="flex flex-col pt-0.5">
+                                    <h4 class="text-[13px] font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-blue-600">${v.title}</h4>
+                                    <span class="text-[11px] text-gray-500 mt-1">${v.channelName || 'Admin'}</span>
+                                    <span class="text-[11px] text-gray-500">${v.viewsText || '0'} views</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        loadVideo();
+    </script>
+</body>
+</html>
