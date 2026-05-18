@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>স্মার্ট ইউটিলিটি হাব | All-in-One Tools</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .hidden { display: none; }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
@@ -16,7 +19,7 @@
     <main class="max-w-6xl mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
+            <div id="ip-card" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
                 <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">🌐</div>
                 <h2 class="text-xl font-bold mt-4">মাই আইপি চেকার</h2>
                 <p class="text-slate-500 text-sm mt-2">আপনার বর্তমান আইপি অ্যাড্রেস এবং লোকেশন এক ক্লিকে দেখে নিন।</p>
@@ -45,10 +48,9 @@
     </footer>
 
     <script type="module">
-        // Firebase CDN লিঙ্ক ব্যবহার করা হচ্ছে (সরাসরি HTML এর জন্য)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
-        // আপনার দেওয়া আসল কনফিগ
         const firebaseConfig = {
             apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
             authDomain: "mega-tool-hub.firebaseapp.com",
@@ -58,13 +60,31 @@
             appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
         };
 
-        // Firebase ইনিশিয়ালাইজ করা
-        try {
-            const app = initializeApp(firebaseConfig);
-            console.log("Firebase Connected Successfully!");
-        } catch (error) {
-            console.error("Firebase connection failed:", error);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ডেটাবেজ থেকে স্ট্যাটাস চেক করে টুল দেখানোর ফাংশন
+        async function checkToolStatus() {
+            try {
+                const docRef = doc(db, "settings", "tools");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const isVisible = docSnap.data()['ip-checker'];
+                    const ipCard = document.getElementById('ip-card');
+                    
+                    if (isVisible) {
+                        ipCard.classList.remove('hidden'); // Active থাকলে দেখাবে
+                    } else {
+                        ipCard.classList.add('hidden');    // Inactive থাকলে লুকিয়ে ফেলবে
+                    }
+                }
+            } catch (error) {
+                console.error("স্ট্যাটাস আনতে সমস্যা হয়েছে:", error);
+            }
         }
+
+        checkToolStatus();
     </script>
 </body>
 </html>
