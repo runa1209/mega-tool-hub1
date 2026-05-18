@@ -1,198 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Utility Hub</title>
+    <title>Mega Tool Hub - Free Online Tools</title>
+    <meta name="description" content="Free online tools - Age Calculator, Password Generator, BMI Calculator and more!">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
-                        secondary: { 50: '#fdf4ff', 100: '#fae8ff', 500: '#d946ef', 600: '#c026d3' }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .ad-slot { min-height: 90px; background: #f3f4f6; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 0.875rem; border-radius: 0.75rem; margin: 1rem auto; max-width: 1200px; }
-        .ad-slot.hidden-ads { display: none !important; }
-        .tool-iframe { width: 100%; height: 100%; border: none; }
-        .gradient-text { background: linear-gradient(135deg, #2563eb 0%, #c026d3 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body {
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .ad-container {
+            min-height: 90px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-gray-50">
 
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 glass shadow-sm transition-all duration-300" id="navbar">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div class="w-9 h-9 bg-gradient-to-br from-primary-600 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md">
-                        <i class="fa-solid fa-bolt"></i>
-                    </div>
-                    <span id="site-brand" class="text-xl font-bold gradient-text tracking-tight">Smart Utility Hub</span>
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                            <i class="fas fa-tools text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-gray-800">Mega Tool Hub</span>
+                    </a>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <a href="admin.html" id="admin-link" class="hidden px-4 py-2 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-lg transition-colors border border-primary-100">
-                        <i class="fa-solid fa-lock mr-2"></i>Admin
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#tools" class="text-gray-600 hover:text-indigo-600 font-medium transition">Tools</a>
+                    <a href="#categories" class="text-gray-600 hover:text-indigo-600 font-medium transition">Categories</a>
+                    <a href="#popular" class="text-gray-600 hover:text-indigo-600 font-medium transition">Popular</a>
+                    <a href="/admin/" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        <i class="fas fa-lock mr-2"></i>Admin
                     </a>
-                    <button id="login-btn" onclick="toggleAuthModal()" class="px-5 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-all shadow-sm">
-                        Login
-                    </button>
-                    <div id="user-menu" class="hidden flex items-center space-x-3">
-                        <img id="user-avatar" src="" class="w-9 h-9 rounded-full border-2 border-primary-200 shadow-sm">
-                        <button onclick="logout()" class="text-gray-500 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-red-50">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                        </button>
-                    </div>
                 </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#tools" class="block px-3 py-2 text-gray-600 hover:bg-indigo-50 rounded-md">Tools</a>
+                <a href="#categories" class="block px-3 py-2 text-gray-600 hover:bg-indigo-50 rounded-md">Categories</a>
+                <a href="#popular" class="block px-3 py-2 text-gray-600 hover:bg-indigo-50 rounded-md">Popular</a>
+                <a href="/admin/" class="block px-3 py-2 text-indigo-600 font-medium">Admin Panel</a>
             </div>
         </div>
     </nav>
 
-    <!-- Ad Slot: Top Banner -->
-    <div id="ad-top" class="ad-slot mt-20 mx-4">Advertisement Space</div>
+    <!-- Top Ad Banner -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div id="ad-top" class="ad-container rounded-lg">
+            <span><i class="fas fa-ad mr-2"></i>Advertisement Space (Admin Managed)</span>
+        </div>
+    </div>
 
     <!-- Hero Section -->
-    <section class="pt-10 pb-20 px-4 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        
-        <div class="max-w-7xl mx-auto text-center relative z-10">
-            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-primary-100 text-primary-700 text-sm font-medium mb-6">
-                <span class="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
-                Free Online Tools Collection
-            </div>
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-                All Your <span class="gradient-text">Daily Tools</span><br>in One Place
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6">
+                Your All-in-One <span class="text-transparent bg-clip-text gradient-bg">Online Tool Box</span>
             </h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10">
-                Calculators, URL shorteners, converters, generators, and utilities. Fast, privacy-focused, and completely free.
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Free, fast, and easy-to-use online tools. From Age Calculator to Password Generator - everything you need in one place!
             </p>
             
-            <!-- Search -->
-            <div class="max-w-2xl mx-auto relative mb-12">
-                <input type="text" id="search-input" onkeyup="filterTools()" placeholder="Search for calculators, converters..." 
-                    class="w-full px-6 py-4 pl-14 rounded-2xl border border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none shadow-lg text-lg transition-all">
-                <i class="fa-solid fa-magnifying-glass absolute left-5 top-5 text-gray-400 text-lg"></i>
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto relative">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    placeholder="Search tools (e.g., age calculator, password generator)..." 
+                    class="w-full px-6 py-4 rounded-full border-2 border-gray-200 focus:border-indigo-500 focus:outline-none text-lg shadow-lg"
+                >
+                <button class="absolute right-2 top-2 bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 transition">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-            
-            <!-- Categories -->
-            <div id="category-filters" class="flex flex-wrap justify-center gap-3 mb-8">
-                <button onclick="filterByCategory('all')" class="cat-btn active px-5 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow-md transition-all">All</button>
-                <!-- Dynamic categories loaded here -->
+
+            <!-- Quick Stats -->
+            <div class="mt-12 flex justify-center space-x-8 text-gray-600">
+                <div class="flex items-center">
+                    <i class="fas fa-tools text-indigo-600 mr-2"></i>
+                    <span id="total-tools">Loading...</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-users text-indigo-600 mr-2"></i>
+                    <span>Free Forever</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-bolt text-indigo-600 mr-2"></i>
+                    <span>Instant Results</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Tools Grid -->
-    <section class="pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div id="tools-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
-                <div class="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-                <p>Loading awesome tools...</p>
-            </div>
+    <!-- Categories Section -->
+    <section id="categories" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Browse by Category</h2>
+        
+        <div id="categories-container" class="flex flex-wrap justify-center gap-4">
+            <!-- Categories will be loaded from Firebase -->
+            <div class="loading-skeleton h-12 w-32 rounded-full"></div>
+            <div class="loading-skeleton h-12 w-40 rounded-full"></div>
+            <div class="loading-skeleton h-12 w-36 rounded-full"></div>
         </div>
     </section>
 
-    <!-- Ad Slot: Bottom -->
-    <div id="ad-bottom" class="ad-slot mx-4 mb-8">Advertisement Space</div>
+    <!-- Middle Ad Banner -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="ad-middle" class="ad-container rounded-lg">
+            <span><i class="fas fa-ad mr-2"></i>Advertisement Space (Admin Managed)</span>
+        </div>
+    </div>
+
+    <!-- Tools Grid Section -->
+    <section id="tools" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">All Tools</h2>
+            <div class="flex space-x-2">
+                <button id="filter-all" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">All</button>
+                <button id="filter-popular" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Popular</button>
+            </div>
+        </div>
+
+        <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Tools will be loaded from Firebase -->
+            <div class="loading-skeleton h-64 rounded-xl"></div>
+            <div class="loading-skeleton h-64 rounded-xl"></div>
+            <div class="loading-skeleton h-64 rounded-xl"></div>
+            <div class="loading-skeleton h-64 rounded-xl"></div>
+            <div class="loading-skeleton h-64 rounded-xl"></div>
+            <div class="loading-skeleton h-64 rounded-xl"></div>
+        </div>
+    </section>
+
+    <!-- Popular Tools Section -->
+    <section id="popular" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white rounded-3xl my-12 shadow-sm">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Most Popular Tools</h2>
+        
+        <div id="popular-tools" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Popular tools will be loaded from Firebase -->
+            <div class="loading-skeleton h-48 rounded-xl"></div>
+            <div class="loading-skeleton h-48 rounded-xl"></div>
+            <div class="loading-skeleton h-48 rounded-xl"></div>
+            <div class="loading-skeleton h-48 rounded-xl"></div>
+        </div>
+    </section>
+
+    <!-- Bottom Ad Banner -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="ad-bottom" class="ad-container rounded-lg">
+            <span><i class="fas fa-ad mr-2"></i>Advertisement Space (Admin Managed)</span>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center p-6">
+                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-bolt text-indigo-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Lightning Fast</h3>
+                <p class="text-gray-600">All tools work instantly in your browser. No downloads, no waiting!</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">100% Secure</h3>
+                <p class="text-gray-600">Your data never leaves your browser. We prioritize your privacy.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-mobile-alt text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Mobile Friendly</h3>
+                <p class="text-gray-600">Works perfectly on all devices - desktop, tablet, and mobile.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center space-x-2 mb-4 md:mb-0">
-                <div class="w-8 h-8 bg-gradient-to-br from-primary-600 to-secondary-500 rounded-lg flex items-center justify-center text-white text-sm">
-                    <i class="fa-solid fa-bolt"></i>
+    <footer class="bg-gray-900 text-white py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                            <i class="fas fa-tools text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">Mega Tool Hub</span>
+                    </div>
+                    <p class="text-gray-400">Free online tools for everyone. Simple, fast, and reliable.</p>
                 </div>
-                <span id="footer-brand" class="font-bold text-white">Smart Utility Hub</span>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Home</a></li>
+                        <li><a href="#tools" class="hover:text-white transition">All Tools</a></li>
+                        <li><a href="#categories" class="hover:text-white transition">Categories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="text-sm"> Smart Utility Hub. Built with Firebase & Tailwind.</div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p> Mega Tool Hub. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Tool Modal -->
-    <div id="tool-modal" class="fixed inset-0 z-[60] hidden">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeToolModal()"></div>
-        <div class="absolute inset-4 md:inset-10 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col transform transition-all">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
-                <div class="flex items-center space-x-3">
-                    <div id="modal-tool-icon" class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600"></div>
-                    <h3 id="modal-tool-name" class="text-xl font-bold text-gray-800">Tool Name</h3>
-                </div>
-                <button onclick="closeToolModal()" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <div class="flex-1 relative bg-gray-50">
-                <iframe id="tool-iframe" class="tool-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- Auth Modal -->
-    <div id="auth-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeAuthModal()"></div>
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative z-10 transform transition-all">
-            <div class="text-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Welcome Back</h3>
-                <p class="text-sm text-gray-500 mt-1">Login to access admin features</p>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="you@example.com">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all" placeholder="••••••••">
-                </div>
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-primary-600 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
-                    Sign In
-                </button>
-            </form>
-            <div class="mt-6">
-                <div class="relative mb-4">
-                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-                    <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">Or continue with</span></div>
-                </div>
-                <button onclick="handleGoogleLogin()" class="w-full py-3 border border-gray-200 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-all">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
-                    <span class="text-sm font-medium text-gray-700">Google</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 z-[80] transform translate-y-24 opacity-0 transition-all duration-300">
-        <div class="bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 border border-gray-700">
-            <i id="toast-icon" class="fa-solid fa-circle-check text-green-400 text-lg"></i>
-            <span id="toast-message" class="font-medium text-sm">Operation successful</span>
-        </div>
-    </div>
-
-    <!-- Firebase -->
+    <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ==================== CONFIGURE YOUR FIREBASE HERE ====================
+        // Your Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
             authDomain: "mega-tool-hub.firebaseapp.com",
@@ -201,289 +304,177 @@
             messagingSenderId: "312297953340",
             appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
         };
-        // =====================================================================
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.fbAuth = auth;
-        window.fbDb = db;
-        window.fbSignIn = signInWithEmailAndPassword;
-        window.fbGoogleSignIn = signInWithPopup;
-        window.fbGoogleProvider = GoogleAuthProvider;
-        window.fbSignOut = signOut;
-        window.fbOnAuthStateChanged = onAuthStateChanged;
-        window.fbCollection = collection;
-        window.fbQuery = query;
-        window.fbWhere = where;
-        window.fbOrderBy = orderBy;
-        window.fbGetDocs = getDocs;
-        window.fbDoc = doc;
-        window.fbGetDoc = getDoc;
-        window.fbSetDoc = setDoc;
-
-        // Auth State Listener
-        window.fbOnAuthStateChanged(auth, async (user) => {
-            const loginBtn = document.getElementById('login-btn');
-            const userMenu = document.getElementById('user-menu');
-            const adminLink = document.getElementById('admin-link');
-            
-            if (user) {
-                // Ensure user doc exists (for tracking)
-                const userRef = window.fbDoc(window.fbDb, 'users', user.uid);
-                const userSnap = await window.fbGetDoc(userRef);
-                if (!userSnap.exists()) {
-                    await window.fbSetDoc(userRef, {
-                        email: user.email,
-                        name: user.displayName || '',
-                        photoURL: user.photoURL || '',
-                        role: 'user',
-                        createdAt: new Date()
-                    }, { merge: true });
-                }
-
-                loginBtn.classList.add('hidden');
-                userMenu.classList.remove('hidden');
-                document.getElementById('user-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=random`;
-                
-                // Check admin role
-                const uData = (await window.fbGetDoc(userRef)).data();
-                if (uData && uData.role === 'admin') {
-                    adminLink.classList.remove('hidden');
-                }
-            } else {
-                loginBtn.classList.remove('hidden');
-                userMenu.classList.add('hidden');
-                adminLink.classList.add('hidden');
-            }
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         });
-    </script>
 
-    <script>
-        // ==================== UI LOGIC ====================
-
-        let allTools = [];
-        let currentCategory = 'all';
-
-        function toggleAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-        
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = msg;
-            document.getElementById('toast-icon').className = type === 'error' 
-                ? 'fa-solid fa-circle-exclamation text-red-400 text-lg' 
-                : 'fa-solid fa-circle-check text-green-400 text-lg';
-            toast.classList.remove('translate-y-24', 'opacity-0');
-            setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3000);
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+        // Load Categories
+        async function loadCategories() {
             try {
-                await window.fbSignIn(window.fbAuth, email, password);
-                closeAuthModal();
-                showToast('Login successful!');
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function handleGoogleLogin() {
-            try {
-                await window.fbGoogleSignIn(window.fbAuth, new window.fbGoogleProvider());
-                closeAuthModal();
-                showToast('Login successful!');
-            } catch (err) {
-                showToast(err.message, 'error');
-            }
-        }
-
-        async function logout() {
-            await window.fbSignOut(window.fbAuth);
-            showToast('Logged out successfully');
-        }
-
-        // Load Site Settings
-        async function loadSettings() {
-            try {
-                const snap = await window.fbGetDoc(window.fbDoc(window.fbDb, 'settings', 'site'));
-                if (snap.exists()) {
-                    const data = snap.data();
-                    if (data.siteName) {
-                        document.getElementById('site-brand').textContent = data.siteName;
-                        document.getElementById('footer-brand').textContent = data.siteName;
-                    }
-                    // Global Ad Blocker
-                    if (data.adBlockerEnabled === true) {
-                        document.querySelectorAll('.ad-slot').forEach(el => el.classList.add('hidden-ads'));
-                    }
-                }
-            } catch (e) { console.error('Settings load error', e); }
-        }
-
-        // Load & Render Tools
-        async function loadTools() {
-            const grid = document.getElementById('tools-grid');
-            try {
-                const q = window.fbQuery(
-                    window.fbCollection(window.fbDb, 'tools'),
-                    window.fbWhere('status', '==', 'active'),
-                    window.fbOrderBy('order', 'asc')
-                );
-                const snap = await window.fbGetDocs(q);
-                allTools = [];
-                const categories = new Set();
+                const categoriesSnapshot = await getDocs(collection(db, 'categories'));
+                const container = document.getElementById('categories-container');
+                container.innerHTML = '';
                 
-                grid.innerHTML = '';
-                snap.forEach(doc => {
-                    const tool = { id: doc.id, ...doc.data() };
-                    allTools.push(tool);
-                    if (tool.category) categories.add(tool.category);
+                categoriesSnapshot.forEach(doc => {
+                    const category = doc.data();
+                    const btn = document.createElement('button');
+                    btn.className = 'px-6 py-3 bg-white border-2 border-gray-200 rounded-full hover:border-indigo-500 hover:text-indigo-600 transition font-medium shadow-sm';
+                    btn.innerHTML = `<i class="${category.icon} mr-2"></i>${category.name}`;
+                    btn.onclick = () => filterByCategory(category.id);
+                    container.appendChild(btn);
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load Tools
+        async function loadTools(categoryFilter = null, searchQuery = '') {
+            try {
+                let toolsQuery = query(collection(db, 'tools'), orderBy('createdAt', 'desc'));
+                
+                if (categoryFilter) {
+                    toolsQuery = query(collection(db, 'tools'), where('category', '==', categoryFilter));
+                }
+                
+                const toolsSnapshot = await getDocs(toolsQuery);
+                const container = document.getElementById('tools-grid');
+                container.innerHTML = '';
+                
+                let count = 0;
+                toolsSnapshot.forEach(doc => {
+                    const tool = doc.data();
                     
-                    const card = document.createElement('div');
-                    card.className = 'tool-card bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1 cursor-pointer group';
-                    card.setAttribute('data-category', tool.category || 'uncategorized');
-                    card.setAttribute('data-name', (tool.name + ' ' + (tool.description || '')).toLowerCase());
-                    card.onclick = () => openTool(tool);
+                    // Search filter
+                    if (searchQuery && !tool.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+                        !tool.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+                        return;
+                    }
                     
-                    card.innerHTML = `
-                        <div class="w-14 h-14 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-2xl flex items-center justify-center text-primary-600 text-2xl mb-5 group-hover:scale-110 transition-transform shadow-sm">
-                            <i class="fa-solid ${tool.icon || 'fa-wrench'}"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-800 text-lg mb-2">${tool.name}</h3>
-                        <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed">${tool.description || 'No description available.'}</p>
-                        <div class="mt-5 flex items-center text-primary-600 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                            Launch Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    count++;
+                    const card = createToolCard(doc.id, tool);
+                    container.appendChild(card);
+                });
+                
+                document.getElementById('total-tools').textContent = `${count}+ Tools`;
+                
+                if (count === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12 text-gray-500">
+                            <i class="fas fa-search text-4xl mb-4"></i>
+                            <p class="text-xl">No tools found</p>
                         </div>
                     `;
-                    grid.appendChild(card);
-                });
-
-                if (allTools.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400"><i class="fa-solid fa-box-open text-4xl mb-4"></i><p>No tools available yet. Add some from the admin panel!</p></div>`;
                 }
+            } catch (error) {
+                console.error('Error loading tools:', error);
+            }
+        }
 
-                // Render category filters
-                const catContainer = document.getElementById('category-filters');
-                categories.forEach(cat => {
-                    const btn = document.createElement('button');
-                    btn.className = 'cat-btn px-5 py-2 rounded-full bg-white text-gray-600 border border-gray-200 text-sm font-medium hover:border-primary-300 hover:text-primary-600 transition-all';
-                    btn.textContent = cat;
-                    btn.onclick = () => filterByCategory(cat, btn);
-                    catContainer.appendChild(btn);
+        // Load Popular Tools
+        async function loadPopularTools() {
+            try {
+                const popularQuery = query(collection(db, 'tools'), where('popular', '==', true), limit(4));
+                const toolsSnapshot = await getDocs(popularQuery);
+                const container = document.getElementById('popular-tools');
+                container.innerHTML = '';
+                
+                toolsSnapshot.forEach(doc => {
+                    const tool = doc.data();
+                    const card = createToolCard(doc.id, tool, true);
+                    container.appendChild(card);
                 });
-
-            } catch (err) {
-                console.error(err);
-                grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500"><i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i><p>Error loading tools. Check Firebase config.</p></div>`;
+            } catch (error) {
+                console.error('Error loading popular tools:', error);
             }
         }
 
-        function filterTools() {
-            const term = document.getElementById('search-input').value.toLowerCase();
-            document.querySelectorAll('.tool-card').forEach(card => {
-                const match = card.getAttribute('data-name').includes(term);
-                const catMatch = currentCategory === 'all' || card.getAttribute('data-category') === currentCategory;
-                card.style.display = (match && catMatch) ? 'block' : 'none';
-            });
-        }
-
-        function filterByCategory(cat, btnElement = null) {
-            currentCategory = cat;
-            // Update active state
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('active', 'bg-primary-600', 'text-white', 'shadow-md');
-                b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-            });
-            const activeBtn = btnElement || document.querySelector('.cat-btn');
-            if (activeBtn) {
-                activeBtn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-                activeBtn.classList.add('active', 'bg-primary-600', 'text-white', 'shadow-md');
-            }
-            
-            const term = document.getElementById('search-input').value.toLowerCase();
-            document.querySelectorAll('.tool-card').forEach(card => {
-                const catMatch = cat === 'all' || card.getAttribute('data-category') === cat;
-                const searchMatch = card.getAttribute('data-name').includes(term);
-                card.style.display = (catMatch && searchMatch) ? 'block' : 'none';
-            });
-        }
-
-        // Load Ads Dynamically
+        // Load Ads
         async function loadAds() {
             try {
-                const q = window.fbQuery(
-                    window.fbCollection(window.fbDb, 'ads'),
-                    window.fbWhere('status', '==', 'active')
-                );
-                const snap = await window.fbGetDocs(q);
-                snap.forEach(doc => {
+                const adsSnapshot = await getDocs(collection(db, 'ads'));
+                adsSnapshot.forEach(doc => {
                     const ad = doc.data();
-                    const slot = document.getElementById(`ad-${ad.position}`);
-                    if (slot) {
-                        slot.innerHTML = ad.code || '<div class="text-gray-400">Ad Space</div>';
-                        slot.style.background = 'transparent';
-                        slot.style.border = 'none';
-                        slot.style.minHeight = 'auto';
+                    const adElement = document.getElementById(`ad-${ad.position}`);
+                    if (adElement && ad.active) {
+                        adElement.innerHTML = ad.code || `<a href="${ad.link}" target="_blank" class="block w-full h-full flex items-center justify-center text-indigo-600 hover:text-indigo-800">${ad.title}</a>`;
+                        adElement.style.border = 'none';
+                        adElement.style.background = 'transparent';
                     }
                 });
-            } catch (e) { console.error('Ads error', e); }
+            } catch (error) {
+                console.error('Error loading ads:', error);
+            }
         }
 
-        // Tool Modal with Isolated Iframe
-        function openTool(tool) {
-            document.getElementById('modal-tool-name').textContent = tool.name;
-            document.getElementById('modal-tool-icon').innerHTML = `<i class="fa-solid ${tool.icon || 'fa-wrench'}"></i>`;
-            const iframe = document.getElementById('tool-iframe');
+        // Create Tool Card
+        function createToolCard(id, tool, isPopular = false) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-xl shadow-md card-hover overflow-hidden border border-gray-100';
             
-            const htmlContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <script src="https://cdn.tailwindcss.com"><\/script>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-                    <style>${tool.cssContent || ''}</style>
-                </head>
-                <body class="bg-white min-h-screen p-6">
-                    ${tool.htmlContent || '<div class="text-center text-gray-500 mt-20 text-lg">Tool content is empty.</div>'}
-                    <script>
-                        try {
-                            ${tool.jsContent || ''}
-                        } catch(e) {
-                            console.error('Tool error:', e);
-                        }
-                    <\/script>
-                </body>
-                </html>
+            const iconColors = {
+                calculator: 'bg-blue-100 text-blue-600',
+                security: 'bg-red-100 text-red-600',
+                text: 'bg-green-100 text-green-600',
+                converter: 'bg-yellow-100 text-yellow-600',
+                developer: 'bg-purple-100 text-purple-600',
+                default: 'bg-indigo-100 text-indigo-600'
+            };
+            
+            const colorClass = iconColors[tool.iconCategory] || iconColors.default;
+            
+            div.innerHTML = `
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="tool-icon ${colorClass}">
+                            <i class="${tool.icon}"></i>
+                        </div>
+                        ${tool.popular ? '<span class="bg-orange-100 text-orange-600 text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>' : ''}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">${tool.name}</h3>
+                    <p class="text-gray-600 mb-4 line-clamp-2">${tool.description}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500"><i class="fas fa-clock mr-1"></i>${tool.time || 'Instant'}</span>
+                        <a href="/tools/${id}" class="inline-flex items-center text-indigo-600 font-semibold hover:text-indigo-800 transition">
+                            Use Tool <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
             `;
-            iframe.srcdoc = htmlContent;
-            document.getElementById('tool-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            
+            return div;
         }
 
-        function closeToolModal() {
-            document.getElementById('tool-modal').classList.add('hidden');
-            document.getElementById('tool-iframe').srcdoc = '';
-            document.body.style.overflow = '';
+        // Filter by Category
+        function filterByCategory(categoryId) {
+            loadTools(categoryId);
         }
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 20) nav.classList.add('shadow-md');
-            else nav.classList.remove('shadow-md');
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            loadTools(null, e.target.value);
+        });
+
+        // Filter buttons
+        document.getElementById('filter-all').addEventListener('click', () => {
+            loadTools();
+        });
+
+        document.getElementById('filter-popular').addEventListener('click', () => {
+            loadTools(null, 'popular');
         });
 
         // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            loadSettings();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
             loadTools();
+            loadPopularTools();
             loadAds();
         });
     </script>
