@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>অ্যাডমিন ড্যাশবোর্ড</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <nav class="bg-white shadow-sm p-4 flex justify-between items-center px-8 border-b border-slate-100">
+        <h1 class="font-bold text-xl text-blue-600 italic">Smart Hub Admin</h1>
+        <button onclick="logout()" class="text-red-500 font-semibold hover:bg-red-50 px-4 py-2 rounded-lg transition">লগআউট</button>
+    </nav>
+
+    <div class="max-w-4xl mx-auto mt-12 p-6">
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <h2 class="text-xl font-black mb-6 text-slate-900">টুল ম্যানেজমেন্ট</h2>
+            
+            <div class="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                <div>
+                    <p class="font-bold text-slate-800 text-lg">মাই আইপি চেকার</p>
+                    <p class="text-slate-400 text-sm italic">হোমপেজ থেকে টুলটি অন/অফ করুন</p>
+                </div>
+                <button id="ipStatusBtn" onclick="toggleTool('ip-checker')" class="px-6 py-2 rounded-xl font-bold text-white transition-all duration-300">
+                    লোড হচ্ছে...
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
+            authDomain: "mega-tool-hub.firebaseapp.com",
+            projectId: "mega-tool-hub",
+            appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) window.location.href = "login.html";
+            else loadToolStatus();
+        });
+
+        async function loadToolStatus() {
+            const docRef = doc(db, "settings", "tools");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const status = docSnap.data()['ip-checker'];
+                const btn = document.getElementById('ipStatusBtn');
+                btn.innerText = status ? "Active" : "Inactive";
+                btn.className = status ? "bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-xl font-bold text-white" : "bg-red-500 hover:bg-red-600 px-6 py-2 rounded-xl font-bold text-white";
+                window.currentStatus = status;
+            }
+        }
+
+        window.toggleTool = async (toolId) => {
+            const btn = document.getElementById('ipStatusBtn');
+            btn.innerText = "আপডেট হচ্ছে...";
+            const newStatus = !window.currentStatus;
+            try {
+                await updateDoc(doc(db, "settings", "tools"), { [toolId]: newStatus });
+                loadToolStatus();
+            } catch (e) {
+                alert("আপনার পারমিশন নেই!");
+            }
+        }
+
+        window.logout = () => signOut(auth);
+    </script>
+</body>
+</html>
