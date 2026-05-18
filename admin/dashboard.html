@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VideoHub Admin</title>
+    <title>VideoHub Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans p-4 md:p-10">
@@ -22,12 +22,17 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-600 mb-1">Video Title</label>
-                        <input type="text" id="vidTitle" placeholder="e.g. Awesome Content" class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
+                        <input type="text" id="vidTitle" placeholder="e.g. My Awesome Video" class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-bold text-gray-600 mb-1">Thumbnail Image URL</label>
-                        <input type="url" id="vidThumb" placeholder="https://image-link.jpg" class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
+                        <input type="url" id="vidThumb" placeholder="https://example.com/image.jpg" class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-600 mb-1">Video Embed URL</label>
+                        <input type="url" id="vidEmbed" placeholder="https://www.youtube.com/embed/..." class="w-full p-3 bg-gray-50 border rounded-lg focus:outline-none focus:border-blue-500">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -42,7 +47,7 @@
                     </div>
 
                     <button onclick="publishVideo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-lg transition mt-2">
-                        Publish Post
+                        Publish Video
                     </button>
                     <p id="publishMsg" class="text-center text-sm font-bold mt-2 text-green-600 hidden">Video Published Successfully!</p>
                 </div>
@@ -87,10 +92,9 @@
             else loadAdsSettings(); 
         });
 
-        // Parse views text to a number for sorting (e.g. "2.5M" -> 2500000)
         function parseViewsToNumber(viewsText) {
             let num = parseFloat(viewsText);
-            if (isNaN(num)) return Math.floor(Math.random() * 10000); // fallback
+            if (isNaN(num)) return Math.floor(Math.random() * 10000); 
             if (viewsText.toUpperCase().includes('M')) return num * 1000000;
             if (viewsText.toUpperCase().includes('K')) return num * 1000;
             return num;
@@ -99,27 +103,29 @@
         window.publishVideo = async () => {
             const title = document.getElementById('vidTitle').value;
             const thumbnail = document.getElementById('vidThumb').value;
+            const embedUrl = document.getElementById('vidEmbed').value;
             const duration = document.getElementById('vidDuration').value || "12:00";
             const viewsText = document.getElementById('vidViews').value || "1.2M";
-            
-            // Generate a real number for sorting the "Best Videos" filter
             const viewsCount = parseViewsToNumber(viewsText);
 
-            if(!title || !thumbnail) return alert("Title and Thumbnail URL are required!");
+            if(!title || !thumbnail || !embedUrl) return alert("Title, Thumbnail, and Embed URL are required!");
 
             try {
                 await addDoc(collection(db, "videos"), {
                     title: title,
                     thumbnail: thumbnail,
+                    embedUrl: embedUrl,
                     duration: duration,
                     viewsText: viewsText,
                     viewsCount: viewsCount, 
-                    channelName: "CPA Master",
+                    channelName: "Admin",
                     timestamp: serverTimestamp()
                 });
                 
+                // Form Reset
                 document.getElementById('vidTitle').value = '';
                 document.getElementById('vidThumb').value = '';
+                document.getElementById('vidEmbed').value = '';
                 
                 const msg = document.getElementById('publishMsg');
                 msg.classList.remove('hidden');
@@ -130,7 +136,6 @@
             }
         };
 
-        // Ads Logic
         async function loadAdsSettings() {
             const snap = await getDoc(doc(db, "settings", "tools"));
             if(snap.exists()) {
