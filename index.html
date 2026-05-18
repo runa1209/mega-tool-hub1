@@ -10,32 +10,10 @@
         body { font-family: 'Roboto', sans-serif; background-color: #f3f4f6; }
         .title-font { font-family: 'Lobster', cursive; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .ad-slot { background: repeating-linear-gradient(45deg, #f9fafb, #f9fafb 10px, #f3f4f6 10px, #f3f4f6 20px); }
     </style>
 </head>
 <body class="max-w-md mx-auto bg-white shadow-xl min-h-screen flex flex-col relative overflow-x-hidden">
-
-    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-            <div class="flex items-center gap-2">
-                <div class="w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">V</div>
-                <span class="font-bold tracking-tight">Menu</span>
-            </div>
-            <button onclick="toggleMenu()" class="text-gray-600 font-bold text-2xl leading-none">&times;</button>
-        </div>
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="#" class="flex items-center gap-3 px-3 py-2 bg-red-50 text-red-600 rounded-lg font-bold"><span class="text-lg">🏠</span> Home</a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">🔥</span> Trending</a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">📁</span> Categories</a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">⭐</span> Premium</a>
-            <hr class="my-2 border-gray-200">
-            <a href="pages/contact.html" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">✉️</span> Contact</a>
-            <a href="pages/privacy-policy.html" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"><span class="text-lg">🛡️</span> Privacy Policy</a>
-        </nav>
-    </div>
-    
-    <div id="menuOverlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
 
     <header class="flex justify-between items-center px-3 py-2 bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
@@ -44,37 +22,32 @@
         </div>
         <div class="flex items-center gap-4 text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <button onclick="toggleMenu()" class="focus:outline-none">
+            <button class="focus:outline-none">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
     </header>
 
-    <div id="top-ad" class="hidden border-b border-gray-200">
-        <div class="ad-slot py-4 text-center flex flex-col items-center justify-center min-h-[90px]">
-            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Advertisement</span>
-            <div id="ad-content-top" class="w-full text-xs text-gray-500 overflow-hidden px-2"></div>
-        </div>
+    <div id="ad-top-container" class="hidden border-b border-gray-200">
+        <div class="ad-slot py-3 text-center flex flex-col items-center min-h-[90px] px-2" id="ad-top-content"></div>
     </div>
 
-    <main class="p-3 flex-grow">
+    <main class="p-3 flex-grow pb-8">
         <div class="flex justify-between items-center mb-3 mt-1">
             <h1 class="text-[22px] font-normal title-font text-gray-800 tracking-wide">Trending Free Videos</h1>
         </div>
 
         <div class="flex gap-2 mb-4 text-sm overflow-x-auto no-scrollbar pb-1">
-            <button id="btn-best" onclick="sortVideos('best')" class="filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors">
-                👍 Best Videos
-            </button>
-            <button id="btn-new" onclick="sortVideos('new')" class="filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors">
-                ⚡ Newest videos
-            </button>
+            <button id="btn-best" onclick="sortVideos('best')" class="filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm transition-colors">👍 Best</button>
+            <button id="btn-new" onclick="sortVideos('new')" class="filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm transition-colors">⚡ Newest</button>
         </div>
 
         <div id="videoGrid" class="grid grid-cols-2 gap-x-2 gap-y-5">
-            <div class="col-span-2 text-center py-10 text-gray-400 text-sm" id="loadingText">
-                Loading videos from database...
-            </div>
+            <div class="col-span-2 text-center py-10 text-gray-400 text-sm">Loading videos...</div>
+        </div>
+
+        <div id="ad-bot-container" class="hidden mt-8 border-t border-gray-200 pt-4">
+            <div class="ad-slot py-3 text-center flex flex-col items-center min-h-[90px] px-2" id="ad-bot-content"></div>
         </div>
     </main>
 
@@ -91,94 +64,103 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Sidebar Toggle
-        window.toggleMenu = () => {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-            document.getElementById('menuOverlay').classList.toggle('hidden');
-        };
-
         let allVideos = [];
+        let adData = {}; // Store ad settings globally
 
-        // Load Ads
-        async function loadAds() {
+        // Load Ads Settings
+        async function fetchAdSettings() {
             try {
-                const snap = await getDoc(doc(db, "settings", "tools"));
-                if (snap.exists() && snap.data().showAds) {
-                    document.getElementById('top-ad').classList.remove('hidden');
-                    document.getElementById('ad-content-top').innerHTML = snap.data().adCode || "Ad Slot Active";
+                const snap = await getDoc(doc(db, "settings", "ads"));
+                if(snap.exists()) {
+                    adData = snap.data();
+                    
+                    // Render Top Ad
+                    if(adData.adTopShow) {
+                        document.getElementById('ad-top-container').classList.remove('hidden');
+                        document.getElementById('ad-top-content').innerHTML = adData.adTopCode || "Top Ad Space";
+                    }
+                    
+                    // Render Bottom Ad
+                    if(adData.adBotShow) {
+                        document.getElementById('ad-bot-container').classList.remove('hidden');
+                        document.getElementById('ad-bot-content').innerHTML = adData.adBotCode || "Bottom Ad Space";
+                    }
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Ad Load Error", e); }
         }
 
-        // Fetch Videos (with ID included for watch page)
+        // Fetch Videos
         async function fetchVideos() {
             try {
                 const q = query(collection(db, "videos"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
                 
                 allVideos = [];
-                querySnapshot.forEach((doc) => {
+                querySnapshot.forEach(doc => {
                     let data = doc.data();
                     data.id = doc.id; 
                     allVideos.push(data);
                 });
-                
                 sortVideos('new'); 
             } catch (error) {
-                document.getElementById('videoGrid').innerHTML = '<div class="col-span-2 text-center py-10 text-red-400 text-sm">Error loading database.</div>';
+                console.error(error);
             }
         }
 
-        // Sort Logic
         window.sortVideos = (type) => {
             const btnBest = document.getElementById('btn-best');
             const btnNew = document.getElementById('btn-new');
             
             if (type === 'new') {
-                btnNew.className = "filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
-                btnBest.className = "filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
+                btnNew.className = "px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm transition-colors";
+                btnBest.className = "px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm transition-colors";
                 allVideos.sort((a, b) => b.timestamp - a.timestamp);
             } else {
-                btnBest.className = "filter-btn px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
-                btnNew.className = "filter-btn px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 flex items-center gap-1 shadow-sm transition-colors";
+                btnBest.className = "px-3 py-1.5 border border-gray-800 rounded bg-gray-800 text-white font-bold flex-shrink-0 shadow-sm transition-colors";
+                btnNew.className = "px-3 py-1.5 border border-gray-300 rounded bg-white text-gray-700 font-medium flex-shrink-0 shadow-sm transition-colors";
                 allVideos.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0)); 
             }
             renderGrid();
         };
 
-        // Render Grid
         function renderGrid() {
             const grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
             
-            if (allVideos.length === 0) {
-                grid.innerHTML = '<div class="col-span-2 text-center py-10 text-gray-400 text-sm">No videos found. Publish from Admin Panel.</div>';
-                return;
-            }
+            let counter = 0; // To track video position
 
             allVideos.forEach(v => {
-                grid.innerHTML += `
+                counter++;
+
+                const cardHTML = `
                     <div class="cursor-pointer group" onclick="window.location.href='watch.html?v=${v.id}'">
                         <div class="relative w-full aspect-[4/3] bg-gray-200 rounded-[4px] overflow-hidden">
-                            <img src="${v.thumbnail}" alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
                             <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[11px] font-bold px-1 rounded-sm">${v.duration || '00:00'}</span>
                         </div>
-                        <div class="flex justify-between items-start mt-1.5">
-                            <h3 class="text-[13px] font-bold text-gray-900 leading-tight title-font truncate pr-1 group-hover:text-red-600">${v.title}</h3>
-                        </div>
+                        <h3 class="text-[13px] font-bold text-gray-900 leading-tight title-font truncate pr-1 mt-1.5">${v.title}</h3>
                         <div class="flex items-center gap-1 mt-1 text-[11px] text-gray-500">
-                            <img src="https://ui-avatars.com/api/?name=${v.channelName || 'CPA'}&background=random" class="w-3.5 h-3.5 rounded-full">
-                            <span class="truncate max-w-[60px]">${v.channelName || 'Admin'}</span>
-                            <span class="text-[10px] text-gray-400">|</span>
-                            <span>${v.viewsText || '0'} views</span>
+                            <span>Admin</span><span class="text-[10px] text-gray-400">|</span><span>${v.viewsText || '0'} views</span>
                         </div>
                     </div>
                 `;
+                
+                grid.innerHTML += cardHTML;
+
+                // 2. MIDDLE AD SLOT (Injects an ad after every 4th video)
+                if (counter % 4 === 0 && adData.adMidShow) {
+                    const middleAdHTML = `
+                        <div class="col-span-2 ad-slot py-3 mt-2 text-center flex items-center justify-center min-h-[70px] border border-gray-200 rounded text-xs text-gray-500 overflow-hidden">
+                            ${adData.adMidCode || "Middle Ad Space"}
+                        </div>
+                    `;
+                    grid.innerHTML += middleAdHTML;
+                }
             });
         }
 
-        loadAds();
-        fetchVideos();
+        // Initialize
+        fetchAdSettings().then(fetchVideos);
     </script>
 </body>
 </html>
