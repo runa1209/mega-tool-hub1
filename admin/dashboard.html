@@ -3,34 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamHub Admin | Professional Dashboard</title>
+    <title>StreamHub Admin | Content & Ads Manager</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-primary: #0f0f1a;
-            --bg-secondary: #1a1a2e;
-            --bg-card: #16213e;
-            --bg-hover: #1f2b47;
+            --bg-primary: #0a0a12;
+            --bg-secondary: #12121f;
+            --bg-card: #1a1a2e;
+            --bg-hover: #252540;
+            --bg-input: #0f0f1a;
             --accent: #e94560;
             --accent-hover: #c73e54;
+            --accent-glow: rgba(233, 69, 96, 0.3);
             --success: #00d9a3;
             --warning: #ffc107;
             --danger: #ff4757;
             --info: #3498db;
-            --text-primary: #eaeaea;
-            --text-secondary: #a0a0a0;
+            --purple: #8b5cf6;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8a8aa3;
+            --text-muted: #5a5a7a;
             --border: #2a2a4a;
-            --sidebar-width: 260px;
+            --border-light: #333355;
+            --sidebar-width: 280px;
             --header-height: 70px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -39,27 +40,13 @@
             overflow-x: hidden;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent);
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         /* Layout */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
+        .app-container { display: flex; min-height: 100vh; }
 
         /* Sidebar */
         .sidebar {
@@ -73,9 +60,10 @@
             transition: all 0.3s ease;
         }
 
-        .sidebar.collapsed {
-            width: 80px;
-        }
+        .sidebar.collapsed { width: 80px; }
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .section-title { display: none; }
 
         .sidebar-header {
             padding: 20px;
@@ -86,45 +74,28 @@
         }
 
         .sidebar-logo {
-            width: 40px;
-            height: 40px;
+            width: 42px; height: 42px;
             background: var(--accent);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: white;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
-        .sidebar-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        .sidebar-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
 
-        .sidebar.collapsed .sidebar-title,
-        .sidebar.collapsed .nav-text,
-        .sidebar.collapsed .section-title {
-            display: none;
-        }
-
-        .nav-section {
-            padding: 16px 0;
-        }
-
+        .nav-section { padding: 16px 0; }
         .section-title {
             padding: 0 20px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
+            font-size: 10px; text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
             margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .nav-item {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             gap: 14px;
             padding: 12px 20px;
             color: var(--text-secondary);
@@ -132,6 +103,8 @@
             transition: all 0.2s;
             cursor: pointer;
             border-left: 3px solid transparent;
+            margin: 2px 8px;
+            border-radius: 0 10px 10px 0;
         }
 
         .nav-item:hover {
@@ -140,17 +113,12 @@
         }
 
         .nav-item.active {
-            background: var(--bg-hover);
+            background: rgba(233, 69, 96, 0.1);
             color: var(--accent);
             border-left-color: var(--accent);
         }
 
-        .nav-item i {
-            font-size: 18px;
-            width: 24px;
-            text-align: center;
-        }
-
+        .nav-item i { font-size: 18px; width: 24px; text-align: center; }
         .nav-item .badge {
             margin-left: auto;
             background: var(--accent);
@@ -158,23 +126,19 @@
             padding: 2px 8px;
             border-radius: 10px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        .sidebar.collapsed .badge {
-            display: none;
-        }
+        .sidebar.collapsed .badge { display: none; }
 
-        /* Main Content */
+        /* Main */
         .main-wrapper {
             flex: 1;
             margin-left: var(--sidebar-width);
             transition: margin-left 0.3s ease;
         }
 
-        .sidebar.collapsed + .main-wrapper {
-            margin-left: 80px;
-        }
+        .sidebar.collapsed + .main-wrapper { margin-left: 80px; }
 
         /* Header */
         .top-header {
@@ -184,61 +148,37 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 28px;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+        .header-left { display: flex; align-items: center; gap: 20px; }
 
         .toggle-btn {
-            background: none;
-            border: none;
+            background: none; border: none;
             color: var(--text-secondary);
-            font-size: 20px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
+            font-size: 20px; cursor: pointer;
+            padding: 8px; border-radius: 10px;
             transition: all 0.2s;
         }
 
-        .toggle-btn:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-        }
+        .toggle-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
 
-        .breadcrumb {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
+        .breadcrumb { font-size: 14px; color: var(--text-secondary); }
+        .breadcrumb span { color: var(--text-primary); font-weight: 700; }
 
-        .breadcrumb span {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
+        .header-right { display: flex; align-items: center; gap: 16px; }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
+        .search-box { position: relative; }
         .search-box input {
-            background: var(--bg-primary);
+            background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 16px 10px 40px;
+            border-radius: 12px;
+            padding: 11px 16px 11px 42px;
             color: var(--text-primary);
-            width: 300px;
+            width: 320px;
             font-size: 14px;
             outline: none;
             transition: all 0.2s;
@@ -246,98 +186,96 @@
 
         .search-box input:focus {
             border-color: var(--accent);
-            width: 350px;
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         .search-box i {
             position: absolute;
-            left: 14px;
-            top: 50%;
+            left: 14px; top: 50%;
             transform: translateY(-50%);
-            color: var(--text-secondary);
+            color: var(--text-muted);
         }
 
         .header-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--bg-primary);
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: var(--bg-input);
             border: 1px solid var(--border);
             color: var(--text-secondary);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
         }
 
-        .header-icon:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-        }
+        .header-icon:hover { background: var(--bg-hover); color: var(--text-primary); }
 
         .notification-dot {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 8px;
-            height: 8px;
+            top: 8px; right: 8px;
+            width: 8px; height: 8px;
             background: var(--accent);
             border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
+            display: flex; align-items: center;
+            gap: 10px; cursor: pointer;
             padding: 6px 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
-        .user-profile:hover {
-            background: var(--bg-hover);
-        }
+        .user-profile:hover { background: var(--bg-hover); border-color: var(--border); }
 
         .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 38px; height: 38px;
+            border-radius: 12px;
             background: var(--accent);
             display: flex;
+            align-items: center; justify-content: center;
+            font-weight: 800; color: white; font-size: 15px;
+        }
+
+        .user-info { line-height: 1.3; }
+        .user-name { font-size: 14px; font-weight: 700; }
+        .user-role { font-size: 11px; color: var(--text-muted); }
+
+        /* Content */
+        .content-area { padding: 28px; }
+
+        /* Section Title */
+        .section-header-row {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: white;
-        }
-
-        .user-info {
-            line-height: 1.2;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .user-role {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        /* Content Area */
-        .content-area {
-            padding: 24px;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
             margin-bottom: 24px;
+        }
+
+        .section-heading {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-heading i { color: var(--accent); font-size: 22px; }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
@@ -353,17 +291,20 @@
         .stat-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
             background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .stat-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            border-color: var(--border-light);
         }
+
+        .stat-card:hover::before { opacity: 1; }
 
         .stat-header {
             display: flex;
@@ -373,108 +314,45 @@
         }
 
         .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 50px; height: 50px;
+            border-radius: 14px;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
             font-size: 22px;
         }
 
-        .stat-icon.blue { background: rgba(52, 152, 219, 0.15); color: var(--info); }
-        .stat-icon.green { background: rgba(0, 217, 163, 0.15); color: var(--success); }
-        .stat-icon.orange { background: rgba(255, 193, 7, 0.15); color: var(--warning); }
-        .stat-icon.red { background: rgba(233, 69, 96, 0.15); color: var(--accent); }
+        .stat-icon.red { background: rgba(233, 69, 96, 0.12); color: var(--accent); }
+        .stat-icon.green { background: rgba(0, 217, 163, 0.12); color: var(--success); }
+        .stat-icon.blue { background: rgba(52, 152, 219, 0.12); color: var(--info); }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.12); color: var(--purple); }
+        .stat-icon.orange { background: rgba(255, 193, 7, 0.12); color: var(--warning); }
 
         .stat-trend {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             gap: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 4px 10px;
+            font-size: 13px; font-weight: 700;
+            padding: 5px 12px;
             border-radius: 20px;
         }
 
-        .stat-trend.up {
-            background: rgba(0, 217, 163, 0.15);
-            color: var(--success);
-        }
-
-        .stat-trend.down {
-            background: rgba(255, 71, 87, 0.15);
-            color: var(--danger);
-        }
+        .stat-trend.up { background: rgba(0, 217, 163, 0.12); color: var(--success); }
+        .stat-trend.down { background: rgba(255, 71, 87, 0.12); color: var(--danger); }
 
         .stat-value {
             font-size: 32px;
             font-weight: 800;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             letter-spacing: -1px;
         }
 
         .stat-label {
             font-size: 14px;
             color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        /* Charts Section */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .chart-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .chart-title {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .chart-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chart-btn {
-            padding: 6px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .chart-btn:hover, .chart-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        /* Recent Videos Table */
-        .table-card {
+        /* Panel Card */
+        .panel-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -482,391 +360,163 @@
             margin-bottom: 24px;
         }
 
-        .table-header {
+        .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        .table-title {
+        .panel-title {
             font-size: 18px;
             font-weight: 700;
-        }
-
-        .table-actions {
             display: flex;
+            align-items: center;
             gap: 10px;
         }
 
+        .panel-title i { color: var(--accent); }
+
+        /* Buttons */
         .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
             border: none;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-family: inherit;
         }
 
         .btn-primary {
             background: var(--accent);
             color: white;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
         }
 
         .btn-primary:hover {
             background: var(--accent-hover);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+            box-shadow: 0 6px 25px rgba(233, 69, 96, 0.4);
         }
 
         .btn-secondary {
-            background: var(--bg-primary);
+            background: var(--bg-input);
             color: var(--text-primary);
             border: 1px solid var(--border);
         }
 
-        .btn-secondary:hover {
-            background: var(--bg-hover);
-        }
-
-        .btn-danger {
-            background: rgba(255, 71, 87, 0.15);
-            color: var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--danger);
-            color: white;
-        }
+        .btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-light); }
 
         .btn-success {
             background: rgba(0, 217, 163, 0.15);
             color: var(--success);
+            border: 1px solid rgba(0, 217, 163, 0.3);
         }
 
-        .btn-success:hover {
-            background: var(--success);
-            color: var(--bg-primary);
-        }
+        .btn-success:hover { background: var(--success); color: var(--bg-primary); }
 
-        /* Table */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 14px 16px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .data-table td {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-        }
-
-        .data-table tr:hover td {
-            background: var(--bg-hover);
-        }
-
-        .video-cell {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .video-thumb {
-            width: 80px;
-            height: 45px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: var(--bg-primary);
-        }
-
-        .video-info-cell h4 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .video-info-cell p {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-published {
-            background: rgba(0, 217, 163, 0.15);
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: rgba(255, 193, 7, 0.15);
-            color: var(--warning);
-        }
-
-        .status-rejected {
+        .btn-danger {
             background: rgba(255, 71, 87, 0.15);
             color: var(--danger);
+            border: 1px solid rgba(255, 71, 87, 0.3);
         }
 
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
+        .btn-danger:hover { background: var(--danger); color: white; }
 
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
 
-        .action-btn:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Activity Feed */
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .activity-item {
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-            padding: 12px;
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
-
-        .activity-item:hover {
-            background: var(--bg-hover);
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-text {
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 4px;
-        }
-
-        .activity-text strong {
-            color: var(--text-primary);
-        }
-
-        .activity-time {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        /* Top Channels */
-        .channel-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .channel-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px;
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
-
-        .channel-item:hover {
-            background: var(--bg-hover);
-        }
-
-        .channel-rank {
-            width: 28px;
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
             height: 28px;
-            border-radius: 50%;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-secondary);
         }
 
-        .channel-rank.top {
-            background: var(--accent);
-            color: white;
-        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
 
-        .channel-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: white;
-            font-size: 14px;
-        }
-
-        .channel-details {
-            flex: 1;
-        }
-
-        .channel-name {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .channel-stats {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .channel-growth {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlide 0.3s ease;
-        }
-
-        @keyframes modalSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            padding: 24px 24px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            border: none;
-            background: var(--bg-primary);
-            color: var(--text-secondary);
+        .toggle-slider {
+            position: absolute;
             cursor: pointer;
-            font-size: 18px;
-            transition: all 0.2s;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            transition: all 0.3s;
         }
 
-        .modal-close:hover {
-            background: var(--danger);
-            color: white;
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: all 0.3s;
         }
 
-        .modal-body {
-            padding: 24px;
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+            background: white;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+
+        .toggle-text {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .toggle-status {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
+        .form-group.full-width { grid-column: 1 / -1; }
+
         .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-primary);
+            padding: 14px 16px;
+            background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 15px;
             outline: none;
             transition: all 0.2s;
             font-family: inherit;
@@ -874,19 +524,379 @@
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
+
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
 
         .form-textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
         }
 
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8aa3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .form-select option { background: var(--bg-card); color: var(--text-primary); }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Tags Input */
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-height: 50px;
+            align-items: center;
+        }
+
+        .tags-input-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .tag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            animation: tagIn 0.2s ease;
+        }
+
+        @keyframes tagIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .tag-chip i { cursor: pointer; font-size: 11px; }
+        .tag-chip i:hover { opacity: 0.8; }
+
+        .tags-input {
+            flex: 1;
+            min-width: 100px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            padding: 4px;
+        }
+
+        .tags-input::placeholder { color: var(--text-muted); }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .data-table tbody tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        .video-cell {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .video-thumb {
+            width: 100px;
+            height: 56px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+        }
+
+        .video-info-cell h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .video-info-cell p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .status-published { background: rgba(0, 217, 163, 0.12); color: var(--success); }
+        .status-pending { background: rgba(255, 193, 7, 0.12); color: var(--warning); }
+        .status-draft { background: rgba(138, 138, 163, 0.12); color: var(--text-secondary); }
+
+        .action-btns { display: flex; gap: 8px; }
+
+        .action-btn {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+
+        .action-btn:hover { background: var(--accent); color: white; }
+        .action-btn.delete:hover { background: var(--danger); }
+
+        /* Ads Section */
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .ad-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .ad-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+
+        .ad-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ad-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ad-card-title i { color: var(--accent); }
+
+        .ad-preview {
+            background: var(--bg-input);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .ad-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .ad-preview-text {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .ad-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .ad-stat {
+            text-align: center;
+            padding: 12px;
+            background: var(--bg-input);
+            border-radius: 10px;
+        }
+
+        .ad-stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .ad-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Ad Position Selector */
+        .position-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .position-option {
+            padding: 16px;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .position-option:hover { border-color: var(--border-light); }
+
+        .position-option.selected {
+            border-color: var(--accent);
+            background: rgba(233, 69, 96, 0.05);
+        }
+
+        .position-option i {
+            font-size: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .position-option.selected i { color: var(--accent); }
+
+        .position-option span {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .position-option.selected span { color: var(--accent); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 24px 28px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .modal-close {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            border: none;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover { background: var(--danger); color: white; }
+
+        .modal-body { padding: 24px 28px; }
         .modal-footer {
-            padding: 0 24px 24px;
+            padding: 0 28px 28px;
             display: flex;
             justify-content: flex-end;
             gap: 12px;
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-card);
         }
 
         /* Toast */
@@ -903,109 +913,114 @@
         .toast {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 16px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            gap: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             transform: translateX(120%);
-            transition: all 0.3s ease;
-            min-width: 300px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            min-width: 320px;
+            max-width: 420px;
         }
 
-        .toast.show {
-            transform: translateX(0);
-        }
+        .toast.show { transform: translateX(0); }
 
         .toast-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 40px; height: 40px;
+            border-radius: 12px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+            align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
         }
 
-        .toast-icon.success { background: rgba(0, 217, 163, 0.15); color: var(--success); }
-        .toast-icon.error { background: rgba(255, 71, 87, 0.15); color: var(--danger); }
-        .toast-icon.info { background: rgba(52, 152, 219, 0.15); color: var(--info); }
+        .toast-icon.success { background: rgba(0, 217, 163, 0.12); color: var(--success); }
+        .toast-icon.error { background: rgba(255, 71, 87, 0.12); color: var(--danger); }
+        .toast-icon.info { background: rgba(52, 152, 219, 0.12); color: var(--info); }
+
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+        .toast-message { font-size: 13px; color: var(--text-secondary); }
 
         /* Responsive */
         @media (max-width: 1200px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
+            .form-grid { grid-template-columns: 1fr; }
+            .ads-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.collapsed {
-                transform: translateX(0);
-                width: var(--sidebar-width);
-            }
-            .main-wrapper {
-                margin-left: 0;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .search-box input {
-                width: 200px;
-            }
-            .search-box input:focus {
-                width: 220px;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.collapsed { transform: translateX(0); width: var(--sidebar-width); }
+            .main-wrapper { margin-left: 0; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .search-box input { width: 200px; }
+            .position-grid { grid-template-columns: 1fr; }
+            .ad-stats { grid-template-columns: 1fr; }
         }
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-in {
-            animation: fadeIn 0.5s ease forwards;
+        .animate-in { animation: fadeIn 0.5s ease forwards; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
         }
 
-        /* Progress Bar */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: var(--bg-primary);
-            border-radius: 3px;
-            overflow: hidden;
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: width 0.5s ease;
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
         }
 
-        /* Stats mini chart */
-        .sparkline {
+        /* Tabs */
+        .tabs {
             display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 40px;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: 12px;
+            width: fit-content;
         }
 
-        .spark-bar {
-            flex: 1;
-            background: var(--accent);
-            border-radius: 2px;
-            opacity: 0.6;
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 10px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.2s;
+            font-family: inherit;
         }
 
-        .spark-bar:hover {
-            opacity: 1;
+        .tab-btn:hover { color: var(--text-primary); }
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
         }
+
+        /* Section Hidden */
+        .section-content { display: none; }
+        .section-content.active { display: block; }
     </style>
 <base target="_blank">
 </head>
@@ -1014,276 +1029,432 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <i class="fas fa-play"></i>
-                </div>
+                <div class="sidebar-logo"><i class="fas fa-play"></i></div>
                 <div class="sidebar-title">StreamHub</div>
             </div>
 
             <div class="nav-section">
-                <div class="section-title">Main</div>
-                <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                <div class="section-title">Dashboard</div>
+                <a href="#" class="nav-item active" onclick="showSection('dashboard', this)">
                     <i class="fas fa-th-large"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-                <a href="#" class="nav-item" onclick="showSection('analytics')">
-                    <i class="fas fa-chart-line"></i>
-                    <span class="nav-text">Analytics</span>
-                </a>
-                <a href="#" class="nav-item" onclick="showSection('videos')">
-                    <i class="fas fa-video"></i>
-                    <span class="nav-text">Videos</span>
-                    <span class="badge">24</span>
-                </a>
-                <a href="#" class="nav-item" onclick="showSection('users')">
-                    <i class="fas fa-users"></i>
-                    <span class="nav-text">Users</span>
-                    <span class="badge">1.2k</span>
-                </a>
-                <a href="#" class="nav-item" onclick="showSection('comments')">
-                    <i class="fas fa-comments"></i>
-                    <span class="nav-text">Comments</span>
-                    <span class="badge">89</span>
+                    <span class="nav-text">Overview</span>
                 </a>
             </div>
 
             <div class="nav-section">
-                <div class="section-title">Management</div>
-                <a href="#" class="nav-item" onclick="showSection('categories')">
+                <div class="section-title">Content</div>
+                <a href="#" class="nav-item" onclick="showSection('posts', this)">
+                    <i class="fas fa-video"></i>
+                    <span class="nav-text">All Posts</span>
+                    <span class="badge" id="postsBadge">5</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('addPost', this)">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="nav-text">Add New Post</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('categories', this)">
                     <i class="fas fa-folder"></i>
                     <span class="nav-text">Categories</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('reports')">
-                    <i class="fas fa-flag"></i>
-                    <span class="nav-text">Reports</span>
-                    <span class="badge">5</span>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Monetization</div>
+                <a href="#" class="nav-item" onclick="showSection('adsManager', this)">
+                    <i class="fas fa-ad"></i>
+                    <span class="nav-text">Ads Manager</span>
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('monetization')">
-                    <i class="fas fa-dollar-sign"></i>
-                    <span class="nav-text">Monetization</span>
+                <a href="#" class="nav-item" onclick="showSection('adBlocker', this)">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="nav-text">AdBlocker Control</span>
                 </a>
             </div>
 
             <div class="nav-section">
                 <div class="section-title">System</div>
-                <a href="#" class="nav-item" onclick="showSection('settings')">
+                <a href="#" class="nav-item" onclick="showSection('settings', this)">
                     <i class="fas fa-cog"></i>
                     <span class="nav-text">Settings</span>
-                </a>
-                <a href="#" class="nav-item" onclick="showSection('logs')">
-                    <i class="fas fa-history"></i>
-                    <span class="nav-text">Activity Logs</span>
                 </a>
             </div>
         </aside>
 
         <!-- Main Wrapper -->
         <div class="main-wrapper">
-            <!-- Top Header -->
+            <!-- Header -->
             <header class="top-header">
                 <div class="header-left">
                     <button class="toggle-btn" onclick="toggleSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="breadcrumb">
-                        Admin / <span>Dashboard</span>
-                    </div>
+                    <div class="breadcrumb">Admin / <span id="currentPage">Overview</span></div>
                 </div>
-
                 <div class="header-right">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search anything..." id="globalSearch">
+                        <input type="text" placeholder="Search posts, ads..." id="globalSearch">
                     </div>
-                    <div class="header-icon" onclick="showToast('No new notifications', 'info')">
+                    <div class="header-icon">
                         <i class="fas fa-bell"></i>
                         <span class="notification-dot"></span>
                     </div>
-                    <div class="header-icon" onclick="showToast('Messages feature coming soon', 'info')">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="user-profile" onclick="toggleUserMenu()">
+                    <div class="user-profile">
                         <div class="user-avatar">A</div>
                         <div class="user-info">
-                            <div class="user-name">Admin User</div>
+                            <div class="user-name">Admin</div>
                             <div class="user-role">Super Admin</div>
                         </div>
-                        <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-secondary);"></i>
                     </div>
                 </div>
             </header>
 
             <!-- Content Area -->
             <div class="content-area">
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card animate-in">
-                        <div class="stat-header">
-                            <div class="stat-icon blue">
-                                <i class="fas fa-eye"></i>
+
+                <!-- DASHBOARD SECTION -->
+                <div id="dashboard" class="section-content active">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-chart-pie"></i> Dashboard Overview</div>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="stat-card animate-in">
+                            <div class="stat-header">
+                                <div class="stat-icon red"><i class="fas fa-video"></i></div>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 24%</div>
                             </div>
-                            <div class="stat-trend up">
-                                <i class="fas fa-arrow-up"></i> 12.5%
-                            </div>
+                            <div class="stat-value" id="dashPosts">0</div>
+                            <div class="stat-label">Total Posts</div>
                         </div>
-                        <div class="stat-value" id="totalViews">2.4M</div>
-                        <div class="stat-label">Total Views</div>
-                        <div class="sparkline" style="margin-top: 12px;">
-                            <div class="spark-bar" style="height: 40%"></div>
-                            <div class="spark-bar" style="height: 60%"></div>
-                            <div class="spark-bar" style="height: 45%"></div>
-                            <div class="spark-bar" style="height: 80%"></div>
-                            <div class="spark-bar" style="height: 65%"></div>
-                            <div class="spark-bar" style="height: 90%"></div>
-                            <div class="spark-bar" style="height: 75%"></div>
+                        <div class="stat-card animate-in" style="animation-delay:0.1s">
+                            <div class="stat-header">
+                                <div class="stat-icon blue"><i class="fas fa-eye"></i></div>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 18%</div>
+                            </div>
+                            <div class="stat-value">2.4M</div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                        <div class="stat-card animate-in" style="animation-delay:0.2s">
+                            <div class="stat-header">
+                                <div class="stat-icon green"><i class="fas fa-ad"></i></div>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</div>
+                            </div>
+                            <div class="stat-value" id="dashAds">0</div>
+                            <div class="stat-label">Active Ads</div>
+                        </div>
+                        <div class="stat-card animate-in" style="animation-delay:0.3s">
+                            <div class="stat-header">
+                                <div class="stat-icon purple"><i class="fas fa-dollar-sign"></i></div>
+                                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 35%</div>
+                            </div>
+                            <div class="stat-value">$1,240</div>
+                            <div class="stat-label">Revenue</div>
                         </div>
                     </div>
 
-                    <div class="stat-card animate-in" style="animation-delay: 0.1s">
-                        <div class="stat-header">
-                            <div class="stat-icon green">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="stat-trend up">
-                                <i class="fas fa-arrow-up"></i> 8.2%
-                            </div>
+                    <div class="panel-card animate-in">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fas fa-clock"></i> Recent Activity</div>
                         </div>
-                        <div class="stat-value" id="totalUsers">18.5K</div>
-                        <div class="stat-label">Total Users</div>
-                        <div class="sparkline" style="margin-top: 12px;">
-                            <div class="spark-bar" style="height: 30%"></div>
-                            <div class="spark-bar" style="height: 50%"></div>
-                            <div class="spark-bar" style="height: 40%"></div>
-                            <div class="spark-bar" style="height: 70%"></div>
-                            <div class="spark-bar" style="height: 55%"></div>
-                            <div class="spark-bar" style="height: 85%"></div>
-                            <div class="spark-bar" style="height: 60%"></div>
-                        </div>
+                        <div id="recentActivity"></div>
+                    </div>
+                </div>
+
+                <!-- ALL POSTS SECTION -->
+                <div id="posts" class="section-content">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-video"></i> All Posts</div>
+                        <button class="btn btn-primary" onclick="showSection('addPost', null, true)">
+                            <i class="fas fa-plus"></i> Add New Post
+                        </button>
                     </div>
 
-                    <div class="stat-card animate-in" style="animation-delay: 0.2s">
-                        <div class="stat-header">
-                            <div class="stat-icon orange">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <div class="stat-trend up">
-                                <i class="fas fa-arrow-up"></i> 23.1%
-                            </div>
-                        </div>
-                        <div class="stat-value" id="totalVideos">3,842</div>
-                        <div class="stat-label">Total Videos</div>
-                        <div class="sparkline" style="margin-top: 12px;">
-                            <div class="spark-bar" style="height: 50%"></div>
-                            <div class="spark-bar" style="height: 70%"></div>
-                            <div class="spark-bar" style="height: 60%"></div>
-                            <div class="spark-bar" style="height: 90%"></div>
-                            <div class="spark-bar" style="height: 75%"></div>
-                            <div class="spark-bar" style="height: 100%"></div>
-                            <div class="spark-bar" style="height: 80%"></div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card animate-in" style="animation-delay: 0.3s">
-                        <div class="stat-header">
-                            <div class="stat-icon red">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div class="stat-trend down">
-                                <i class="fas fa-arrow-down"></i> 2.4%
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fas fa-list"></i> Posts List</div>
+                            <div style="display:flex;gap:10px;">
+                                <button class="btn btn-secondary btn-sm" onclick="refreshPosts()">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteAllPosts()">
+                                    <i class="fas fa-trash"></i> Clear All
+                                </button>
                             </div>
                         </div>
-                        <div class="stat-value" id="totalLikes">856K</div>
-                        <div class="stat-label">Total Likes</div>
-                        <div class="sparkline" style="margin-top: 12px;">
-                            <div class="spark-bar" style="height: 80%"></div>
-                            <div class="spark-bar" style="height: 60%"></div>
-                            <div class="spark-bar" style="height: 70%"></div>
-                            <div class="spark-bar" style="height: 50%"></div>
-                            <div class="spark-bar" style="height: 65%"></div>
-                            <div class="spark-bar" style="height: 45%"></div>
-                            <div class="spark-bar" style="height: 55%"></div>
+                        <div style="overflow-x:auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Post</th>
+                                        <th>Category</th>
+                                        <th>Tags</th>
+                                        <th>Duration</th>
+                                        <th>Views</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="postsTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="postsEmptyState" class="empty-state" style="display:none;">
+                            <i class="fas fa-video-slash"></i>
+                            <h3>No posts yet</h3>
+                            <p>Add your first post to get started</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Charts Grid -->
-                <div class="charts-grid">
-                    <div class="chart-card animate-in">
-                        <div class="chart-header">
-                            <div class="chart-title">Views Analytics</div>
-                            <div class="chart-actions">
-                                <button class="chart-btn active">Week</button>
-                                <button class="chart-btn">Month</button>
-                                <button class="chart-btn">Year</button>
+                <!-- ADD POST SECTION -->
+                <div id="addPost" class="section-content">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-plus-circle"></i> Add New Post</div>
+                    </div>
+
+                    <div class="panel-card animate-in">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fas fa-edit"></i> Post Details</div>
+                        </div>
+
+                        <form id="postForm" onsubmit="event.preventDefault(); submitPost();">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Post Title *</label>
+                                    <input type="text" class="form-input" id="postTitle" placeholder="Enter post title" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Category *</label>
+                                    <select class="form-select" id="postCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option>Gaming</option>
+                                        <option>Music</option>
+                                        <option>Technology</option>
+                                        <option>Education</option>
+                                        <option>Entertainment</option>
+                                        <option>Sports</option>
+                                        <option>News</option>
+                                        <option>Comedy</option>
+                                        <option>Travel</option>
+                                        <option>Food</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-textarea" id="postDesc" placeholder="Write a description for your post..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Tags</label>
+                                    <div class="tags-input-container" id="tagsContainer" onclick="document.getElementById('tagsInput').focus()">
+                                        <input type="text" class="tags-input" id="tagsInput" placeholder="Type tag and press Enter">
+                                    </div>
+                                    <div class="form-hint">Press Enter or comma to add tags</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Video Duration</label>
+                                    <input type="text" class="form-input" id="postDuration" placeholder="e.g. 15:30">
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label class="form-label">Embed / Video URL *</label>
+                                    <input type="url" class="form-input" id="postEmbed" placeholder="https://youtube.com/embed/... or https://example.com/video.mp4" required>
+                                    <div class="form-hint">YouTube embed URL, direct video link, or any embeddable URL</div>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label class="form-label">Thumbnail URL *</label>
+                                    <input type="url" class="form-input" id="postThumb" placeholder="https://example.com/thumbnail.jpg" required>
+                                    <div class="form-hint">Recommended size: 1280x720 pixels</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Channel Name</label>
+                                    <input type="text" class="form-input" id="postChannel" placeholder="Your channel name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="postStatus">
+                                        <option value="published">Published</option>
+                                        <option value="draft">Draft</option>
+                                        <option value="pending">Pending Review</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display:flex;gap:12px;margin-top:28px;justify-content:flex-end;">
+                                <button type="button" class="btn btn-secondary" onclick="resetPostForm()">
+                                    <i class="fas fa-undo"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload"></i> Publish Post
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ADS MANAGER SECTION -->
+                <div id="adsManager" class="section-content">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-ad"></i> Ads Manager</div>
+                        <button class="btn btn-primary" onclick="openAdModal()">
+                            <i class="fas fa-plus"></i> Create New Ad
+                        </button>
+                    </div>
+
+                    <div class="ads-grid" id="adsGrid"></div>
+
+                    <div id="adsEmptyState" class="empty-state" style="display:none;">
+                        <i class="fas fa-ad"></i>
+                        <h3>No ads created yet</h3>
+                        <p>Create your first ad campaign</p>
+                    </div>
+                </div>
+
+                <!-- ADBLOCKER CONTROL SECTION -->
+                <div id="adBlocker" class="section-content">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-shield-alt"></i> AdBlocker Control</div>
+                    </div>
+
+                    <div class="panel-card animate-in">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fas fa-toggle-on"></i> AdBlocker Settings</div>
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:24px;">
+                            <div style="padding:24px;background:var(--bg-input);border-radius:16px;border:1px solid var(--border);">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                    <div>
+                                        <div style="font-size:18px;font-weight:700;margin-bottom:4px;">AdBlocker Detection</div>
+                                        <div style="color:var(--text-muted);font-size:14px;">Detect and handle users with ad blockers</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="adblockDetect" checked onchange="toggleAdBlocker('detect')">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="progress-bar" style="margin-bottom:12px;">
+                                    <div class="progress-fill" id="adblockDetectBar" style="width:100%"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);">
+                                    <span>Status: <span id="adblockDetectStatus" style="color:var(--success);font-weight:700;">Active</span></span>
+                                    <span>Users blocked: <span style="color:var(--text-primary);font-weight:700;">1,240</span></span>
+                                </div>
+                            </div>
+
+                            <div style="padding:24px;background:var(--bg-input);border-radius:16px;border:1px solid var(--border);">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                    <div>
+                                        <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Anti-Adblock Bypass</div>
+                                        <div style="color:var(--text-muted);font-size:14px;">Show alternative content to adblock users</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="adblockBypass" onchange="toggleAdBlocker('bypass')">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="progress-bar" style="margin-bottom:12px;">
+                                    <div class="progress-fill" id="adblockBypassBar" style="width:0%;background:var(--warning)"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);">
+                                    <span>Status: <span id="adblockBypassStatus" style="color:var(--text-muted);font-weight:700;">Disabled</span></span>
+                                    <span>Bypass rate: <span style="color:var(--text-primary);font-weight:700;">0%</span></span>
+                                </div>
+                            </div>
+
+                            <div style="padding:24px;background:var(--bg-input);border-radius:16px;border:1px solid var(--border);">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                    <div>
+                                        <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Ad Replacement</div>
+                                        <div style="color:var(--text-muted);font-size:14px;">Replace blocked ads with native ads</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="adblockReplace" checked onchange="toggleAdBlocker('replace')">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="progress-bar" style="margin-bottom:12px;">
+                                    <div class="progress-fill" id="adblockReplaceBar" style="width:100%;background:var(--info)"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);">
+                                    <span>Status: <span id="adblockReplaceStatus" style="color:var(--success);font-weight:700;">Active</span></span>
+                                    <span>Ads replaced: <span style="color:var(--text-primary);font-weight:700;">8,420</span></span>
+                                </div>
+                            </div>
+
+                            <div style="padding:24px;background:var(--bg-input);border-radius:16px;border:1px solid var(--border);">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                    <div>
+                                        <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Popup Blocker Bypass</div>
+                                        <div style="color:var(--text-muted);font-size:14px;">Allow popups for monetization</div>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="popupBypass" onchange="toggleAdBlocker('popup')">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="progress-bar" style="margin-bottom:12px;">
+                                    <div class="progress-fill" id="popupBypassBar" style="width:0%;background:var(--purple)"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);">
+                                    <span>Status: <span id="popupBypassStatus" style="color:var(--text-muted);font-weight:700;">Disabled</span></span>
+                                    <span>Popups shown: <span style="color:var(--text-primary);font-weight:700;">0</span></span>
+                                </div>
                             </div>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="viewsChart"></canvas>
-                        </div>
-                    </div>
 
-                    <div class="chart-card animate-in" style="animation-delay: 0.1s">
-                        <div class="chart-header">
-                            <div class="chart-title">Device Breakdown</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="deviceChart"></canvas>
+                        <div style="margin-top:24px;padding:24px;background:rgba(233,69,96,0.05);border:1px solid rgba(233,69,96,0.2);border-radius:16px;">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                                <i class="fas fa-info-circle" style="color:var(--accent);font-size:20px;"></i>
+                                <span style="font-weight:700;font-size:16px;">AdBlocker Stats</span>
+                            </div>
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+                                <div style="text-align:center;padding:16px;background:var(--bg-card);border-radius:12px;">
+                                    <div style="font-size:28px;font-weight:800;color:var(--accent);">12.5K</div>
+                                    <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Users with AdBlocker</div>
+                                </div>
+                                <div style="text-align:center;padding:16px;background:var(--bg-card);border-radius:12px;">
+                                    <div style="font-size:28px;font-weight:800;color:var(--success);">68%</div>
+                                    <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Bypass Success Rate</div>
+                                </div>
+                                <div style="text-align:center;padding:16px;background:var(--bg-card);border-radius:12px;">
+                                    <div style="font-size:28px;font-weight:800;color:var(--info);">$340</div>
+                                    <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Recovered Revenue</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Videos Table -->
-                <div class="table-card animate-in">
-                    <div class="table-header">
-                        <div class="table-title">Recent Videos</div>
-                        <div class="table-actions">
-                            <button class="btn btn-secondary" onclick="refreshData()">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                            <button class="btn btn-primary" onclick="openUploadModal()">
-                                <i class="fas fa-plus"></i> Add Video
-                            </button>
-                        </div>
+                <!-- CATEGORIES SECTION -->
+                <div id="categories" class="section-content">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-folder"></i> Categories</div>
+                        <button class="btn btn-primary" onclick="showToast('Category creation coming soon', 'info')">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
                     </div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Video</th>
-                                <th>Channel</th>
-                                <th>Views</th>
-                                <th>Likes</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="videosTableBody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
+                    <div class="panel-card">
+                        <div class="cards-grid" id="categoriesGrid"></div>
+                    </div>
                 </div>
 
-                <!-- Bottom Grid -->
-                <div class="charts-grid">
-                    <!-- Recent Activity -->
-                    <div class="chart-card animate-in">
-                        <div class="chart-header">
-                            <div class="chart-title">Recent Activity</div>
-                            <button class="chart-btn">View All</button>
-                        </div>
-                        <div class="activity-list" id="activityList">
-                            <!-- Populated by JS -->
-                        </div>
+                <!-- SETTINGS SECTION -->
+                <div id="settings" class="section-content">
+                    <div class="section-header-row">
+                        <div class="section-heading"><i class="fas fa-cog"></i> Settings</div>
                     </div>
-
-                    <!-- Top Channels -->
-                    <div class="chart-card animate-in" style="animation-delay: 0.1s">
-                        <div class="chart-header">
-                            <div class="chart-title">Top Channels</div>
-                            <button class="chart-btn">View All</button>
-                        </div>
-                        <div class="channel-list" id="channelList">
-                            <!-- Populated by JS -->
+                    <div class="panel-card">
+                        <div style="text-align:center;padding:40px;color:var(--text-muted);">
+                            <i class="fas fa-tools" style="font-size:48px;margin-bottom:16px;opacity:0.5;"></i>
+                            <h3>Settings Panel</h3>
+                            <p>General settings will be available here</p>
                         </div>
                     </div>
                 </div>
@@ -1291,80 +1462,128 @@
         </div>
     </div>
 
-    <!-- Upload Modal -->
-    <div class="modal-overlay" id="uploadModal">
+    <!-- Edit Post Modal -->
+    <div class="modal-overlay" id="editPostModal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">Upload New Video</div>
-                <button class="modal-close" onclick="closeUploadModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="modal-title">Edit Post</div>
+                <button class="modal-close" onclick="closeEditPostModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Video Title</label>
-                    <input type="text" class="form-input" id="videoTitle" placeholder="Enter video title">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="videoDesc" placeholder="Enter video description"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Category</label>
-                    <select class="form-select" id="videoCategory">
-                        <option>Gaming</option>
-                        <option>Music</option>
-                        <option>Technology</option>
-                        <option>Education</option>
-                        <option>Entertainment</option>
-                        <option>Sports</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Thumbnail URL</label>
-                    <input type="text" class="form-input" id="videoThumb" placeholder="https://example.com/image.jpg">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Channel Name</label>
-                    <input type="text" class="form-input" id="videoChannel" placeholder="Channel name">
+                <input type="hidden" id="editPostId">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-input" id="editPostTitle">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="editPostCategory">
+                            <option>Gaming</option><option>Music</option><option>Technology</option>
+                            <option>Education</option><option>Entertainment</option><option>Sports</option>
+                            <option>News</option><option>Comedy</option><option>Travel</option><option>Food</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="editPostStatus">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                            <option value="pending">Pending Review</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Embed URL</label>
+                        <input type="text" class="form-input" id="editPostEmbed">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Thumbnail URL</label>
+                        <input type="text" class="form-input" id="editPostThumb">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="addVideo()">
-                    <i class="fas fa-upload"></i> Upload Video
-                </button>
+                <button class="btn btn-secondary" onclick="closeEditPostModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditPost()">Save Changes</button>
             </div>
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div class="modal-overlay" id="editModal">
+    <!-- Create Ad Modal -->
+    <div class="modal-overlay" id="adModal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">Edit Video</div>
-                <button class="modal-close" onclick="closeEditModal()">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="modal-title">Create New Ad</div>
+                <button class="modal-close" onclick="closeAdModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="editVideoId">
-                <div class="form-group">
-                    <label class="form-label">Video Title</label>
-                    <input type="text" class="form-input" id="editTitle">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Ad Name</label>
+                        <input type="text" class="form-input" id="adName" placeholder="My Ad Campaign">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Ad Image URL</label>
+                        <input type="url" class="form-input" id="adImage" placeholder="https://example.com/ad-banner.jpg">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Ad Link (Click URL)</label>
+                        <input type="url" class="form-input" id="adLink" placeholder="https://example.com/landing-page">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ad Type</label>
+                        <select class="form-select" id="adType">
+                            <option value="banner">Banner</option>
+                            <option value="popup">Popup</option>
+                            <option value="native">Native</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Display Duration</label>
+                        <select class="form-select" id="adDuration">
+                            <option value="5">5 seconds</option>
+                            <option value="10">10 seconds</option>
+                            <option value="15">15 seconds</option>
+                            <option value="30">30 seconds</option>
+                            <option value="0">Until closed</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Status</label>
-                    <select class="form-select" id="editStatus">
-                        <option value="published">Published</option>
-                        <option value="pending">Pending</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
+
+                <div style="margin-top:20px;">
+                    <label class="form-label">Ad Position</label>
+                    <div class="position-grid">
+                        <div class="position-option selected" onclick="selectPosition(this, 'top')">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Top Banner</span>
+                        </div>
+                        <div class="position-option" onclick="selectPosition(this, 'sidebar')">
+                            <i class="fas fa-columns"></i>
+                            <span>Sidebar</span>
+                        </div>
+                        <div class="position-option" onclick="selectPosition(this, 'popup')">
+                            <i class="fas fa-window-restore"></i>
+                            <span>Popup</span>
+                        </div>
+                        <div class="position-option" onclick="selectPosition(this, 'video')">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Pre-Roll</span>
+                        </div>
+                        <div class="position-option" onclick="selectPosition(this, 'inline')">
+                            <i class="fas fa-grip-lines"></i>
+                            <span>Inline</span>
+                        </div>
+                        <div class="position-option" onclick="selectPosition(this, 'sticky')">
+                            <i class="fas fa-thumbtack"></i>
+                            <span>Sticky</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+                <button class="btn btn-secondary" onclick="closeAdModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createAd()">Create Ad</button>
             </div>
         </div>
     </div>
@@ -1372,361 +1591,614 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAa0gzbURPmkBAJHtCuY-yYdHPPYd2-RtQ",
-            authDomain: "mega-tool-hub.firebaseapp.com",
-            projectId: "mega-tool-hub",
-            storageBucket: "mega-tool-hub.firebasestorage.app",
-            messagingSenderId: "312297953340",
-            appId: "1:312297953340:web:b3c459fc323eae2a8a8b39"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        window.firebaseAdmin = { auth, db };
-        window.firebaseAdminFuncs = {
-            collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, limit, onSnapshot
-        };
-
-        // Real-time listener for videos
-        const videosRef = window.firebaseAdminFuncs.collection(db, 'videos');
-        window.firebaseAdminFuncs.onSnapshot(videosRef, (snapshot) => {
-            const videos = [];
-            snapshot.forEach(doc => {
-                videos.push({ id: doc.id, ...doc.data() });
-            });
-            if (videos.length > 0) {
-                window.updateVideosTable(videos);
-            }
-        });
-    </script>
-
     <script>
-        // Sample Data
-        let videosData = [
-            { id: 1, title: "Building a YouTube Clone with HTML, CSS & JavaScript", channel: "Code Master", views: "125K", likes: "8.5K", status: "published", date: "2 days ago", thumb: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=80&h=45&fit=crop" },
-            { id: 2, title: "Learn Firebase in 10 Minutes - Quick Start Guide", channel: "Tech Tutorials", views: "89K", likes: "5.2K", status: "published", date: "5 hours ago", thumb: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=80&h=45&fit=crop" },
-            { id: 3, title: "Top 10 Programming Languages to Learn in 2024", channel: "Dev World", views: "250K", likes: "15K", status: "published", date: "1 week ago", thumb: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=80&h=45&fit=crop" },
-            { id: 4, title: "AI Revolution: How ChatGPT is Changing Everything", channel: "Future Tech", views: "1.2M", likes: "45K", status: "published", date: "3 days ago", thumb: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=80&h=45&fit=crop" },
-            { id: 5, title: "Gaming Setup Tour 2024 - Ultimate Battlestation", channel: "Gamer Zone", views: "45K", likes: "3.1K", status: "pending", date: "12 hours ago", thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=80&h=45&fit=crop" },
-            { id: 6, title: "Photography Tips for Beginners", channel: "Photo Art", views: "78K", likes: "6.8K", status: "published", date: "4 days ago", thumb: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=80&h=45&fit=crop" },
+        // ===================== DATA STORAGE =====================
+        let posts = JSON.parse(localStorage.getItem('streamhub_posts')) || [
+            {
+                id: 1,
+                title: "Building a YouTube Clone with HTML, CSS & JavaScript",
+                category: "Technology",
+                tags: ["coding", "tutorial", "webdev"],
+                duration: "15:30",
+                embed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                thumb: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=640&h=360&fit=crop",
+                channel: "Code Master",
+                views: "125K",
+                status: "published",
+                date: "2024-01-15",
+                desc: "Learn how to build a complete YouTube clone from scratch using modern web technologies."
+            },
+            {
+                id: 2,
+                title: "Learn Firebase in 10 Minutes",
+                category: "Technology",
+                tags: ["firebase", "backend", "database"],
+                duration: "10:15",
+                embed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                thumb: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=640&h=360&fit=crop",
+                channel: "Tech Tutorials",
+                views: "89K",
+                status: "published",
+                date: "2024-01-14",
+                desc: "Quick start guide to Firebase for web developers."
+            },
+            {
+                id: 3,
+                title: "Top 10 Programming Languages 2024",
+                category: "Education",
+                tags: ["programming", "career", "tech"],
+                duration: "22:45",
+                embed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                thumb: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=640&h=360&fit=crop",
+                channel: "Dev World",
+                views: "250K",
+                status: "published",
+                date: "2024-01-10",
+                desc: "Ranking the best programming languages to learn this year."
+            },
+            {
+                id: 4,
+                title: "AI Revolution: ChatGPT Changing Everything",
+                category: "Technology",
+                tags: ["ai", "chatgpt", "future"],
+                duration: "18:20",
+                embed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                thumb: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=640&h=360&fit=crop",
+                channel: "Future Tech",
+                views: "1.2M",
+                status: "published",
+                date: "2024-01-12",
+                desc: "How artificial intelligence is transforming our world."
+            },
+            {
+                id: 5,
+                title: "Gaming Setup Tour 2024",
+                category: "Gaming",
+                tags: ["gaming", "setup", "pc"],
+                duration: "8:45",
+                embed: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                thumb: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=640&h=360&fit=crop",
+                channel: "Gamer Zone",
+                views: "45K",
+                status: "pending",
+                date: "2024-01-16",
+                desc: "Ultimate battlestation tour with all specs."
+            }
         ];
 
-        const activities = [
-            { icon: "fa-upload", color: "#3498db", text: "<strong>New video uploaded</strong> by Code Master", time: "2 minutes ago" },
-            { icon: "fa-user", color: "#00d9a3", text: "<strong>New user registered</strong> - john_doe@email.com", time: "15 minutes ago" },
-            { icon: "fa-heart", color: "#e94560", text: "<strong>Video reached 1M views</strong> - AI Revolution", time: "1 hour ago" },
-            { icon: "fa-comment", color: "#ffc107", text: "<strong>New comment</strong> on "Building a YouTube Clone"", time: "2 hours ago" },
-            { icon: "fa-flag", color: "#ff4757", text: "<strong>Report submitted</strong> on video #4821", time: "3 hours ago" },
-            { icon: "fa-check", color: "#00d9a3", text: "<strong>Video approved</strong> - Gaming Setup Tour", time: "5 hours ago" },
-        ];
+        let ads = JSON.parse(localStorage.getItem('streamhub_ads')) || [];
+        let currentTags = [];
+        let selectedAdPosition = 'top';
+        let editingPostId = null;
 
-        const channels = [
-            { name: "Code Master", subs: "245K", growth: "+12%", avatar: "CM" },
-            { name: "Tech Tutorials", subs: "189K", growth: "+8%", avatar: "TT" },
-            { name: "Dev World", subs: "320K", growth: "+15%", avatar: "DW" },
-            { name: "Future Tech", subs: "580K", growth: "+22%", avatar: "FT" },
-            { name: "Gamer Zone", subs: "95K", growth: "+5%", avatar: "GZ" },
-        ];
-
-        // Initialize
+        // ===================== INIT =====================
         document.addEventListener('DOMContentLoaded', () => {
-            renderVideosTable(videosData);
-            renderActivities();
-            renderChannels();
-            initCharts();
-            animateNumbers();
+            renderPostsTable();
+            renderAdsGrid();
+            renderCategories();
+            renderRecentActivity();
+            updateDashboardStats();
+            initTagsInput();
+            initSearch();
         });
 
-        // Render Videos Table
-        function renderVideosTable(videos) {
-            const tbody = document.getElementById('videosTableBody');
-            tbody.innerHTML = videos.map(video => `
-                <tr>
-                    <td>
-                        <div class="video-cell">
-                            <img src="${video.thumb}" alt="" class="video-thumb">
-                            <div class="video-info-cell">
-                                <h4>${video.title}</h4>
-                                <p>ID: #${String(video.id).padStart(4, '0')}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${video.channel}</td>
-                    <td>${video.views}</td>
-                    <td>${video.likes}</td>
-                    <td><span class="status-badge status-${video.status}">${video.status}</span></td>
-                    <td>${video.date}</td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="action-btn" onclick="editVideo(${video.id})" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn" onclick="deleteVideo(${video.id})" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="action-btn" onclick="viewVideo(${video.id})" title="View">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Make available globally for Firebase callback
-        window.updateVideosTable = renderVideosTable;
-
-        // Render Activities
-        function renderActivities() {
-            const list = document.getElementById('activityList');
-            list.innerHTML = activities.map(act => `
-                <div class="activity-item">
-                    <div class="activity-icon" style="background: ${act.color}20; color: ${act.color}">
-                        <i class="fas ${act.icon}"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-text">${act.text}</div>
-                        <div class="activity-time">${act.time}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Render Channels
-        function renderChannels() {
-            const list = document.getElementById('channelList');
-            list.innerHTML = channels.map((ch, i) => `
-                <div class="channel-item">
-                    <div class="channel-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
-                    <div class="channel-avatar">${ch.avatar}</div>
-                    <div class="channel-details">
-                        <div class="channel-name">${ch.name}</div>
-                        <div class="channel-stats">${ch.subs} subscribers</div>
-                    </div>
-                    <div class="channel-growth">${ch.growth}</div>
-                </div>
-            `).join('');
-        }
-
-        // Charts
-        function initCharts() {
-            // Views Chart
-            const viewsCtx = document.getElementById('viewsChart').getContext('2d');
-            new Chart(viewsCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Views',
-                        data: [45000, 52000, 48000, 61000, 58000, 72000, 68000],
-                        borderColor: '#e94560',
-                        backgroundColor: 'rgba(233, 69, 96, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#e94560',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#a0a0a0', callback: val => (val/1000) + 'K' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#a0a0a0' }
-                        }
-                    }
-                }
-            });
-
-            // Device Chart
-            const deviceCtx = document.getElementById('deviceChart').getContext('2d');
-            new Chart(deviceCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Desktop', 'Mobile', 'Tablet', 'TV'],
-                    datasets: [{
-                        data: [45, 35, 12, 8],
-                        backgroundColor: ['#e94560', '#3498db', '#00d9a3', '#ffc107'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#a0a0a0', padding: 20, usePointStyle: true }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Animate Numbers
-        function animateNumbers() {
-            const stats = [
-                { id: 'totalViews', target: 2400000, suffix: 'M', divisor: 1000000 },
-                { id: 'totalUsers', target: 18500, suffix: 'K', divisor: 1000 },
-                { id: 'totalVideos', target: 3842, suffix: '', divisor: 1 },
-                { id: 'totalLikes', target: 856000, suffix: 'K', divisor: 1000 }
-            ];
-
-            stats.forEach(stat => {
-                const el = document.getElementById(stat.id);
-                let current = 0;
-                const increment = stat.target / 50;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= stat.target) {
-                        current = stat.target;
-                        clearInterval(timer);
-                    }
-                    const val = (current / stat.divisor).toFixed(stat.divisor > 100 ? 1 : 0);
-                    el.textContent = val + stat.suffix;
-                }, 30);
-            });
-        }
-
-        // Sidebar Toggle
+        // ===================== SIDEBAR & NAVIGATION =====================
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('collapsed');
         }
 
-        // Section Navigation
-        function showSection(section) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            showToast(`Navigated to ${section}`, 'info');
+        function showSection(sectionId, navItem, skipHistory) {
+            // Update nav active state
+            if (navItem) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                navItem.classList.add('active');
+            }
+
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update breadcrumb
+            const titles = {
+                'dashboard': 'Overview',
+                'posts': 'All Posts',
+                'addPost': 'Add New Post',
+                'adsManager': 'Ads Manager',
+                'adBlocker': 'AdBlocker Control',
+                'categories': 'Categories',
+                'settings': 'Settings'
+            };
+            document.getElementById('currentPage').textContent = titles[sectionId] || 'Admin';
+
+            // Refresh data when switching to relevant sections
+            if (sectionId === 'posts') renderPostsTable();
+            if (sectionId === 'adsManager') renderAdsGrid();
+            if (sectionId === 'dashboard') updateDashboardStats();
         }
 
-        // Modal Functions
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.add('active');
+        // ===================== POSTS MANAGEMENT =====================
+        function initTagsInput() {
+            const input = document.getElementById('tagsInput');
+            const container = document.getElementById('tagsContainer');
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const tag = input.value.trim().replace(',', '');
+                    if (tag && !currentTags.includes(tag)) {
+                        currentTags.push(tag);
+                        renderTags();
+                    }
+                    input.value = '';
+                }
+                if (e.key === 'Backspace' && input.value === '' && currentTags.length > 0) {
+                    currentTags.pop();
+                    renderTags();
+                }
+            });
         }
 
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.remove('active');
-            // Clear form
-            document.getElementById('videoTitle').value = '';
-            document.getElementById('videoDesc').value = '';
-            document.getElementById('videoThumb').value = '';
-            document.getElementById('videoChannel').value = '';
+        function renderTags() {
+            const container = document.getElementById('tagsContainer');
+            const input = document.getElementById('tagsInput');
+
+            // Clear existing tags (keep input)
+            Array.from(container.querySelectorAll('.tag-chip')).forEach(chip => chip.remove());
+
+            currentTags.forEach((tag, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'tag-chip';
+                chip.innerHTML = `${tag} <i class="fas fa-times" onclick="removeTag(${index})"></i>`;
+                container.insertBefore(chip, input);
+            });
         }
 
-        function addVideo() {
-            const title = document.getElementById('videoTitle').value;
-            const channel = document.getElementById('videoChannel').value;
-            const thumb = document.getElementById('videoThumb').value;
+        function removeTag(index) {
+            currentTags.splice(index, 1);
+            renderTags();
+        }
 
-            if (!title || !channel) {
-                showToast('Please fill in all required fields', 'error');
+        function submitPost() {
+            const title = document.getElementById('postTitle').value.trim();
+            const category = document.getElementById('postCategory').value;
+            const desc = document.getElementById('postDesc').value.trim();
+            const duration = document.getElementById('postDuration').value.trim();
+            const embed = document.getElementById('postEmbed').value.trim();
+            const thumb = document.getElementById('postThumb').value.trim();
+            const channel = document.getElementById('postChannel').value.trim();
+            const status = document.getElementById('postStatus').value;
+
+            if (!title || !category || !embed || !thumb) {
+                showToast('Please fill in all required fields (*)', 'error');
                 return;
             }
 
-            const newVideo = {
-                id: videosData.length + 1,
-                title: title,
-                channel: channel,
+            const newPost = {
+                id: Date.now(),
+                title,
+                category,
+                tags: [...currentTags],
+                duration: duration || "00:00",
+                embed,
+                thumb,
+                channel: channel || "Anonymous",
                 views: "0",
-                likes: "0",
-                status: "pending",
-                date: "Just now",
-                thumb: thumb || "https://via.placeholder.com/80x45/1a1a2e/e94560?text=NEW"
+                status,
+                date: new Date().toISOString().split('T')[0],
+                desc
             };
 
-            videosData.unshift(newVideo);
-            renderVideosTable(videosData);
-            closeUploadModal();
-            showToast('Video added successfully!', 'success');
+            posts.unshift(newPost);
+            savePosts();
 
-            // Add to Firebase if available
-            if (window.firebaseAdmin) {
-                try {
-                    window.firebaseAdminFuncs.addDoc(
-                        window.firebaseAdminFuncs.collection(window.firebaseAdmin.db, 'videos'),
-                        newVideo
-                    );
-                } catch(e) { console.log('Firebase not ready'); }
+            showToast('Post published successfully!', 'success');
+            resetPostForm();
+
+            // Switch to posts list
+            setTimeout(() => {
+                const postsNav = document.querySelector('.nav-item:nth-child(2)');
+                showSection('posts', postsNav);
+            }, 800);
+        }
+
+        function resetPostForm() {
+            document.getElementById('postForm').reset();
+            currentTags = [];
+            renderTags();
+        }
+
+        function renderPostsTable() {
+            const tbody = document.getElementById('postsTableBody');
+            const emptyState = document.getElementById('postsEmptyState');
+            const table = tbody.closest('.data-table');
+
+            if (posts.length === 0) {
+                table.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            emptyState.style.display = 'none';
+
+            tbody.innerHTML = posts.map(post => `
+                <tr>
+                    <td>
+                        <div class="video-cell">
+                            <img src="${post.thumb}" alt="" class="video-thumb" onerror="this.src='https://via.placeholder.com/100x56/1a1a2e/e94560?text=NO+IMG'">
+                            <div class="video-info-cell">
+                                <h4>${truncateText(post.title, 50)}</h4>
+                                <p>${post.channel} • ${post.desc ? truncateText(post.desc, 40) : 'No description'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span style="background:rgba(52,152,219,0.12);color:var(--info);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">${post.category}</span></td>
+                    <td>${post.tags.map(t => `<span style="background:var(--bg-input);padding:3px 10px;border-radius:6px;font-size:12px;margin-right:4px;">${t}</span>`).join('') || '-'}</td>
+                    <td><i class="far fa-clock" style="margin-right:4px;color:var(--text-muted);"></i>${post.duration}</td>
+                    <td>${post.views}</td>
+                    <td><span class="status-badge status-${post.status}">${post.status}</span></td>
+                    <td>${formatDate(post.date)}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" onclick="previewPost(${post.id})" title="Preview"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn" onclick="editPost(${post.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete" onclick="deletePost(${post.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('postsBadge').textContent = posts.length;
+        }
+
+        function editPost(id) {
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            editingPostId = id;
+            document.getElementById('editPostId').value = id;
+            document.getElementById('editPostTitle').value = post.title;
+            document.getElementById('editPostCategory').value = post.category;
+            document.getElementById('editPostStatus').value = post.status;
+            document.getElementById('editPostEmbed').value = post.embed;
+            document.getElementById('editPostThumb').value = post.thumb;
+
+            document.getElementById('editPostModal').classList.add('active');
+        }
+
+        function saveEditPost() {
+            if (!editingPostId) return;
+
+            const post = posts.find(p => p.id === editingPostId);
+            if (post) {
+                post.title = document.getElementById('editPostTitle').value;
+                post.category = document.getElementById('editPostCategory').value;
+                post.status = document.getElementById('editPostStatus').value;
+                post.embed = document.getElementById('editPostEmbed').value;
+                post.thumb = document.getElementById('editPostThumb').value;
+
+                savePosts();
+                renderPostsTable();
+                showToast('Post updated successfully!', 'success');
+            }
+            closeEditPostModal();
+        }
+
+        function closeEditPostModal() {
+            document.getElementById('editPostModal').classList.remove('active');
+            editingPostId = null;
+        }
+
+        function deletePost(id) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+
+            posts = posts.filter(p => p.id !== id);
+            savePosts();
+            renderPostsTable();
+            updateDashboardStats();
+            showToast('Post deleted successfully!', 'success');
+        }
+
+        function deleteAllPosts() {
+            if (!confirm('WARNING: This will delete ALL posts. Are you sure?')) return;
+            posts = [];
+            savePosts();
+            renderPostsTable();
+            updateDashboardStats();
+            showToast('All posts cleared!', 'info');
+        }
+
+        function previewPost(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                window.open(post.embed, '_blank');
             }
         }
 
-        let editingId = null;
-
-        function editVideo(id) {
-            const video = videosData.find(v => v.id === id);
-            if (!video) return;
-
-            editingId = id;
-            document.getElementById('editTitle').value = video.title;
-            document.getElementById('editStatus').value = video.status;
-            document.getElementById('editModal').classList.add('active');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('active');
-            editingId = null;
-        }
-
-        function saveEdit() {
-            if (!editingId) return;
-
-            const video = videosData.find(v => v.id === editingId);
-            if (video) {
-                video.title = document.getElementById('editTitle').value;
-                video.status = document.getElementById('editStatus').value;
-                renderVideosTable(videosData);
-                showToast('Video updated successfully!', 'success');
-            }
-            closeEditModal();
-        }
-
-        function deleteVideo(id) {
-            if (confirm('Are you sure you want to delete this video?')) {
-                videosData = videosData.filter(v => v.id !== id);
-                renderVideosTable(videosData);
-                showToast('Video deleted successfully!', 'success');
-            }
-        }
-
-        function viewVideo(id) {
-            showToast(`Opening video #${id}...`, 'info');
-        }
-
-        function refreshData() {
+        function refreshPosts() {
             const btn = event.currentTarget.querySelector('i');
             btn.classList.add('fa-spin');
             setTimeout(() => {
                 btn.classList.remove('fa-spin');
-                showToast('Data refreshed!', 'success');
-            }, 1000);
+                renderPostsTable();
+                showToast('Posts refreshed!', 'success');
+            }, 800);
         }
 
-        // Toast System
+        function savePosts() {
+            localStorage.setItem('streamhub_posts', JSON.stringify(posts));
+        }
+
+        // ===================== ADS MANAGEMENT =====================
+        function openAdModal() {
+            document.getElementById('adModal').classList.add('active');
+        }
+
+        function closeAdModal() {
+            document.getElementById('adModal').classList.remove('active');
+            document.getElementById('adName').value = '';
+            document.getElementById('adImage').value = '';
+            document.getElementById('adLink').value = '';
+            document.getElementById('adType').value = 'banner';
+            document.getElementById('adDuration').value = '5';
+            selectedAdPosition = 'top';
+            document.querySelectorAll('.position-option').forEach(p => p.classList.remove('selected'));
+            document.querySelector('.position-option').classList.add('selected');
+        }
+
+        function selectPosition(el, position) {
+            document.querySelectorAll('.position-option').forEach(p => p.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedAdPosition = position;
+        }
+
+        function createAd() {
+            const name = document.getElementById('adName').value.trim();
+            const image = document.getElementById('adImage').value.trim();
+            const link = document.getElementById('adLink').value.trim();
+            const type = document.getElementById('adType').value;
+            const duration = document.getElementById('adDuration').value;
+
+            if (!name || !image || !link) {
+                showToast('Please fill in all ad details', 'error');
+                return;
+            }
+
+            const newAd = {
+                id: Date.now(),
+                name,
+                image,
+                link,
+                type,
+                duration,
+                position: selectedAdPosition,
+                clicks: 0,
+                impressions: Math.floor(Math.random() * 5000) + 1000,
+                ctr: (Math.random() * 5 + 1).toFixed(2),
+                active: true,
+                created: new Date().toISOString().split('T')[0]
+            };
+
+            ads.unshift(newAd);
+            saveAds();
+            renderAdsGrid();
+            closeAdModal();
+            showToast('Ad created successfully!', 'success');
+            updateDashboardStats();
+        }
+
+        function renderAdsGrid() {
+            const grid = document.getElementById('adsGrid');
+            const emptyState = document.getElementById('adsEmptyState');
+
+            if (ads.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            grid.innerHTML = ads.map(ad => `
+                <div class="ad-card animate-in">
+                    <div class="ad-card-header">
+                        <div class="ad-card-title">
+                            <i class="fas fa-ad"></i>
+                            ${truncateText(ad.name, 25)}
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${ad.active ? 'checked' : ''} onchange="toggleAd(${ad.id})">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="ad-preview">
+                        <img src="${ad.image}" alt="Ad" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <div class="ad-preview-text" style="display:none;"><i class="fas fa-image" style="font-size:32px;color:var(--text-muted);margin-bottom:8px;"></i><br>Ad Preview</div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <span style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">${ad.type.toUpperCase()} • ${ad.position.toUpperCase()}</span>
+                        <span style="font-size:12px;color:var(--text-muted);">${ad.duration}s</span>
+                    </div>
+                    <div class="ad-stats">
+                        <div class="ad-stat">
+                            <div class="ad-stat-value">${ad.impressions.toLocaleString()}</div>
+                            <div class="ad-stat-label">Impressions</div>
+                        </div>
+                        <div class="ad-stat">
+                            <div class="ad-stat-value">${ad.clicks}</div>
+                            <div class="ad-stat-label">Clicks</div>
+                        </div>
+                        <div class="ad-stat">
+                            <div class="ad-stat-value">${ad.ctr}%</div>
+                            <div class="ad-stat-label">CTR</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:16px;">
+                        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="editAd(${ad.id})"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm" style="flex:1;" onclick="deleteAd(${ad.id})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAd(id) {
+            const ad = ads.find(a => a.id === id);
+            if (ad) {
+                ad.active = !ad.active;
+                saveAds();
+                showToast(ad.active ? 'Ad activated!' : 'Ad paused!', 'success');
+                updateDashboardStats();
+            }
+        }
+
+        function editAd(id) {
+            showToast('Edit feature: Update ad details in the modal', 'info');
+        }
+
+        function deleteAd(id) {
+            if (!confirm('Delete this ad?')) return;
+            ads = ads.filter(a => a.id !== id);
+            saveAds();
+            renderAdsGrid();
+            updateDashboardStats();
+            showToast('Ad deleted!', 'success');
+        }
+
+        function saveAds() {
+            localStorage.setItem('streamhub_ads', JSON.stringify(ads));
+        }
+
+        // ===================== ADBLOCKER CONTROL =====================
+        function toggleAdBlocker(type) {
+            const states = {
+                'detect': { bar: 'adblockDetectBar', status: 'adblockDetectStatus', active: 'Active', inactive: 'Disabled', color: 'var(--success)' },
+                'bypass': { bar: 'adblockBypassBar', status: 'adblockBypassStatus', active: 'Active', inactive: 'Disabled', color: 'var(--warning)' },
+                'replace': { bar: 'adblockReplaceBar', status: 'adblockReplaceStatus', active: 'Active', inactive: 'Disabled', color: 'var(--info)' },
+                'popup': { bar: 'popupBypassBar', status: 'popupBypassStatus', active: 'Active', inactive: 'Disabled', color: 'var(--purple)' }
+            };
+
+            const state = states[type];
+            const checkbox = document.getElementById(type === 'detect' ? 'adblockDetect' : type === 'bypass' ? 'adblockBypass' : type === 'replace' ? 'adblockReplace' : 'popupBypass');
+            const isChecked = checkbox.checked;
+
+            const bar = document.getElementById(state.bar);
+            const status = document.getElementById(state.status);
+
+            bar.style.width = isChecked ? '100%' : '0%';
+            status.textContent = isChecked ? state.active : state.inactive;
+            status.style.color = isChecked ? state.color : 'var(--text-muted)';
+
+            showToast(`AdBlocker ${type} ${isChecked ? 'enabled' : 'disabled'}`, isChecked ? 'success' : 'info');
+        }
+
+        // ===================== CATEGORIES =====================
+        function renderCategories() {
+            const categories = [...new Set(posts.map(p => p.category))];
+            const grid = document.getElementById('categoriesGrid');
+
+            const categoryColors = {
+                'Gaming': '#e94560', 'Music': '#8b5cf6', 'Technology': '#3498db',
+                'Education': '#00d9a3', 'Entertainment': '#ffc107', 'Sports': '#ff6b35',
+                'News': '#00d9a3', 'Comedy': '#ffc107', 'Travel': '#3498db', 'Food': '#e94560'
+            };
+
+            grid.innerHTML = categories.map(cat => {
+                const count = posts.filter(p => p.category === cat).length;
+                const color = categoryColors[cat] || '#e94560';
+                return `
+                    <div class="stat-card" style="cursor:pointer;" onclick="filterByCategory('${cat}')">
+                        <div class="stat-header">
+                            <div class="stat-icon" style="background:${color}20;color:${color};">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" style="font-size:24px;">${cat}</div>
+                        <div class="stat-label">${count} posts</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterByCategory(cat) {
+            showSection('posts', document.querySelectorAll('.nav-item')[1]);
+            // Would filter the posts table in a full implementation
+            showToast(`Filtered by category: ${cat}`, 'info');
+        }
+
+        // ===================== DASHBOARD =====================
+        function updateDashboardStats() {
+            document.getElementById('dashPosts').textContent = posts.length;
+            document.getElementById('dashAds').textContent = ads.filter(a => a.active).length;
+        }
+
+        function renderRecentActivity() {
+            const activities = [
+                { icon: 'fa-upload', color: '#3498db', text: `New post "${posts[0]?.title?.substring(0, 30) || 'Unknown'}..." published`, time: '2 min ago' },
+                { icon: 'fa-ad', color: '#e94560', text: `Ad "${ads[0]?.name?.substring(0, 25) || 'Campaign'}" ${ads[0]?.active ? 'activated' : 'paused'}`, time: '15 min ago' },
+                { icon: 'fa-user', color: '#00d9a3', text: 'New user registered: user_4829', time: '1 hour ago' },
+                { icon: 'fa-shield-alt', color: '#8b5cf6', text: 'AdBlocker detected 234 users', time: '2 hours ago' },
+                { icon: 'fa-eye', color: '#ffc107', text: 'Video reached 10K views milestone', time: '3 hours ago' },
+            ];
+
+            document.getElementById('recentActivity').innerHTML = activities.map(act => `
+                <div style="display:flex;gap:14px;align-items:flex-start;padding:14px;border-radius:12px;transition:all 0.2s;cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">
+                    <div style="width:40px;height:40px;border-radius:10px;background:${act.color}20;color:${act.color};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">
+                        <i class="fas ${act.icon}"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:14px;line-height:1.5;margin-bottom:3px;">${act.text}</div>
+                        <div style="font-size:12px;color:var(--text-muted);">${act.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===================== SEARCH =====================
+        function initSearch() {
+            document.getElementById('globalSearch').addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                if (!query) {
+                    renderPostsTable();
+                    return;
+                }
+
+                const filtered = posts.filter(p =>
+                    p.title.toLowerCase().includes(query) ||
+                    p.category.toLowerCase().includes(query) ||
+                    p.channel.toLowerCase().includes(query) ||
+                    p.tags.some(t => t.toLowerCase().includes(query))
+                );
+
+                // Temporarily override posts for display
+                const originalPosts = posts;
+                posts = filtered;
+                renderPostsTable();
+                posts = originalPosts;
+            });
+        }
+
+        // ===================== UTILITIES =====================
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+            if (diff === 0) return 'Today';
+            if (diff === 1) return 'Yesterday';
+            if (diff < 7) return `${diff} days ago`;
+            if (diff < 30) return `${Math.floor(diff / 7)} weeks ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // ===================== TOAST =====================
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1738,46 +2210,29 @@
                 info: 'fa-info-circle'
             };
 
+            const titles = { success: 'Success', error: 'Error', info: 'Info' };
+
             toast.innerHTML = `
-                <div class="toast-icon ${type}">
-                    <i class="fas ${icons[type]}"></i>
+                <div class="toast-icon ${type}"><i class="fas ${icons[type]}"></i></div>
+                <div class="toast-content">
+                    <div class="toast-title">${titles[type]}</div>
+                    <div class="toast-message">${message}</div>
                 </div>
-                <div>${message}</div>
             `;
 
             container.appendChild(toast);
-
-            requestAnimationFrame(() => {
-                toast.classList.add('show');
-            });
+            requestAnimationFrame(() => toast.classList.add('show'));
 
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
         }
 
-        // User Menu
-        function toggleUserMenu() {
-            showToast('User menu clicked - Profile/Logout options', 'info');
-        }
-
-        // Global Search
-        document.getElementById('globalSearch').addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            const filtered = videosData.filter(v => 
-                v.title.toLowerCase().includes(query) || 
-                v.channel.toLowerCase().includes(query)
-            );
-            renderVideosTable(filtered);
-        });
-
-        // Close modals on outside click
+        // ===================== MODAL CLOSE ON OUTSIDE CLICK =====================
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
+                if (e.target === this) this.classList.remove('active');
             });
         });
     </script>
